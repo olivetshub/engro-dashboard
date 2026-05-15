@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engro WMS v2.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+:root{--green:#006738;--green-dark:#004d2a;--green-mid:#007A3D;--green-light:#8DC63F;--green-pale:#E8F5EE;--red:#ef4444;--orange:#f97316;--amber:#f59e0b;--blue:#2563eb}
+body{background:#f4f6f4;overflow-x:hidden}
+
+/* ===== LOGIN ===== */
+#login-screen{display:flex;height:100vh;width:100vw;background:#fff;overflow:hidden}
+.login-left{flex:0 0 60%;position:relative;display:flex;align-items:flex-end;padding:48px;background:#000;overflow:hidden}
+.login-left-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0a1a0f 0%,#006738 55%,#1a3d0a 100%);opacity:.92; position:absolute;inset:0;background:linear-gradient(135deg,#0a1a0f 0%,#006738 55%,#1a3d0a 100%);opacity:.92;
+  position: absolute;
+  inset: 0;
+
+  background: url("https://i.pinimg.com/736x/03/38/c6/0338c6bd7f1bd561ce469af063196ab4.jpg") no-repeat center/cover;
+
+
+}
+.login-left-radial{position:absolute;inset:0;background:radial-gradient(circle at center,transparent 20%,rgba(0,0,0,.75) 100%)}
+.login-left-grad{position:absolute;inset:0;background:linear-gradient(to top,#000 0%,rgba(0,0,0,.3) 50%,transparent 100%)}
+.login-left-glow{position:absolute;bottom:-60px;left:-60px;width:500px;height:400px;background:rgba(0,103,56,.35);filter:blur(100px);border-radius:50%}
+.login-left-content{position:relative;z-index:2}
+.login-logo-row{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.login-logo-box{width:64px;height:64px;background:#fff;border-radius:16px;border-bottom:4px solid #8DC63F;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.login-logo-box span{font-size:10px;font-weight:900;color:#006738;letter-spacing:1px}
+.login-logo-box img {
+  width: 50px;   /* adjust as needed */
+  height: auto;
+}
+.login-brand{font-size:32px;font-weight:900;color:#fff;letter-spacing:-1px}
+.login-headline{font-size:52px;font-weight:900;color:#fff;line-height:1.08;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+.login-headline em{color:#8DC63F;font-style:normal;text-transform:uppercase;letter-spacing:-2px}
+.login-accent-line{width:96px;height:7px;background:#8DC63F;border-radius:4px}
+
+.login-right{flex:0 0 40%;display:flex;align-items:center;justify-content:center;background:#fcfcfc}
+.login-card{width:100%;max-width:380px;padding:40px 36px;background:#fff;border-radius:4px;border-top:6px solid var(--green);box-shadow:0 30px 60px rgba(0,0,0,.12);position:relative}
+.login-card-version{position:absolute;top:14px;right:18px;font-size:9px;font-weight:700;color:#d1d5db;letter-spacing:3px;text-transform:uppercase}
+.login-card-title{font-size:26px;font-weight:700;color:var(--green);margin-bottom:4px}
+.login-card-sub{font-size:12px;color:#9ca3af;margin-bottom:32px}
+.login-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:#9ca3af;margin-bottom:8px;display:block}
+.login-input{width:100%;border:none;border-bottom:1px solid #e5e7eb;padding:10px 4px;font-size:14px;background:transparent;outline:none;color:#111;transition:border-color .2s;margin-bottom:24px}
+.login-input:focus{border-bottom-color:var(--green)}
+.login-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.login-remember{display:flex;align-items:center;gap:7px;font-size:13px;color:#6b7280;cursor:pointer;user-select:none}
+.login-remember input{accent-color:var(--green)}
+.login-forgot{font-size:13px;font-weight:700;color:var(--green);background:none;border:none;cursor:pointer}
+.login-btn{width:100%;background:var(--green);color:#fff;border:none;padding:15px;border-radius:2px;font-size:12px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:background .2s;box-shadow:0 8px 24px rgba(0,103,56,.25)}
+.login-btn:hover{background:var(--green-dark)}
+.login-error{color:#ef4444;font-size:12px;font-weight:600;margin-bottom:14px;display:none}
+.login-footer{margin-top:28px;text-align:center}
+.login-footer p{font-size:9px;color:#d1d5db;text-transform:uppercase;letter-spacing:3px;font-weight:600}
+.login-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}
+.login-dots span{width:7px;height:7px;border-radius:50%}
+
+/* ===== DASHBOARD ===== */
+#dashboard-screen{display:none;flex:1}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:224px;flex-shrink:0;background:#0D1F16;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+.sb-logo{padding:20px 16px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-logo-box{width:38px;height:38px;background:#fff;border-radius:9px;border-bottom:3px solid #8DC63F;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-box span{font-size:10px;font-weight:900;color:var(--green)}
+.sb-brand{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.sb-version{margin-left:auto;font-size:8px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:1.5px}
+.sb-section{padding:16px 16px 5px;font-size:9px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:2.5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:rgba(255,255,255,.45);font-size:12.5px;font-weight:600;border-left:3px solid transparent;transition:all .18s;user-select:none}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.nav-item:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.75)}
+.nav-item.active{background:rgba(141,198,63,.13);border-left-color:#8DC63F;color:#8DC63F}
+.sb-footer{margin-top:auto;padding:12px 0 16px}
+
+/* Topbar */
+.topbar{height:54px;background:#fff;border-bottom:1px solid #e8ede9;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;position:sticky;top:0;z-index:40}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-title{font-size:14px;font-weight:700;color:#0D1F16}
+.topbar-sub{font-size:10px;color:#7AA58A;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.live-badge{background:#E8F5EE;color:#007A3D;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
+.live-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.topbar-date{font-size:11px;color:#007A3D;font-weight:600}
+.avatar{width:34px;height:34px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.logout-btn{font-size:11px;font-weight:700;color:#ef4444;background:none;border:1px solid #fee2e2;border-radius:8px;padding:5px 12px;cursor:pointer}
+.logout-btn:hover{background:#fef2f2}
+
+/* Main content */
+.main-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.content{flex:1;overflow-y:auto;padding:22px 24px}
+.page{display:none}
+.page.active{display:block}
+
+/* ===== STAT CARDS ===== */
+.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:#fff;border-radius:14px;padding:16px;border:1px solid #f0f0f0;border-top:4px solid}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.stat-icon svg{width:15px;height:15px}
+.stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#9ca3af;margin-bottom:3px}
+.stat-val{font-size:22px;font-weight:900;letter-spacing:-.5px}
+.stat-sub{font-size:11px;color:#6b7280;margin-top:2px;font-weight:500}
+
+/* ===== TOOLBAR ===== */
+.toolbar{background:#fff;border-radius:14px;border:1px solid #f0f0f0;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px}
+.search-wrap{position:relative;flex:1;max-width:300px}
+.search-wrap input{width:100%;padding:7px 10px 7px 32px;border:1px solid #e5e7eb;border-radius:9px;font-size:12px;outline:none;background:#f9fafb;color:#111}
+.search-wrap input:focus{border-color:var(--green-mid)}
+.search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#9ca3af;pointer-events:none}
+.search-ico svg{width:13px;height:13px}
+.filter-sel{padding:7px 10px;border:1px solid #e5e7eb;border-radius:9px;font-size:12px;font-weight:600;color:#374151;background:#f9fafb;outline:none;cursor:pointer}
+.btn-g{background:var(--green-mid);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+.btn-g:hover{background:var(--green-dark)}
+.btn-g svg{width:13px;height:13px}
+
+/* ===== DEVICE GRID ===== */
+.device-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.device-card{background:#fff;border-radius:14px;border:1px solid #f0f0f0;border-left:4px solid;padding:16px;cursor:pointer;transition:box-shadow .2s}
+.device-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.09)}
+.device-card.on{border-left-color:#10b981}
+.device-card.off{border-left-color:#ef4444}
+.device-card.stdby{border-left-color:#f97316}
+.dev-id-lbl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px}
+.dev-name{font-size:15px;font-weight:900;color:#1f2937;margin-top:2px}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.pill-on{background:#d1fae5;color:#065f46}
+.pill-off{background:#fee2e2;color:#991b1b}
+.pill-stdby{background:#ffedd5;color:#9a3412}
+.sdot{width:5px;height:5px;border-radius:50%}
+.sdot-on{background:#10b981;animation:pulse 2s infinite}
+.sdot-off{background:#ef4444}
+.sdot-stdby{background:#f97316;animation:pulse 2s infinite}
+.dev-row{display:flex;justify-content:space-between;align-items:center;background:#f9fafb;padding:5px 9px;border-radius:7px;margin-top:7px}
+.dev-row-lbl{font-size:10px;font-weight:600;color:#9ca3af}
+.dev-row-val{font-size:11px;font-weight:700;color:#374151;font-family:monospace}
+.empty-state{text-align:center;padding:60px 20px;background:#f9fafb;border-radius:14px;border:2px dashed #e5e7eb;margin-top:8px}
+.empty-state svg{width:40px;height:40px;color:#d1d5db;margin:0 auto 10px;display:block}
+.empty-state p{color:#9ca3af;font-size:13px;font-weight:500}
+.section-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-title{font-size:14px;font-weight:700;color:#0D1F16;display:flex;align-items:center;gap:8px}
+.count-badge{font-size:10px;font-weight:500;color:#9ca3af;background:#f3f4f6;padding:2px 8px;border-radius:20px}
+
+/* ===== GAUGE ===== */
+.gauge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.gauge-card{background:#fff;border-radius:14px;border:1px solid #f0f0f0;padding:16px;text-align:center}
+.gauge-lbl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.gauge-status{font-size:13px;font-weight:900;color:#1f2937}
+.gauge-sub{font-size:9px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* ===== ANALYTICS ===== */
+.analytics-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:18px}
+.card-w{background:#fff;border-radius:14px;border:1px solid #f0f0f0;padding:20px}
+.card-title{font-size:14px;font-weight:700;color:#1f2937}
+.card-sub{font-size:11px;color:#9ca3af;font-weight:500}
+.legend-row{display:flex;gap:8px}
+.legend-pill{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px}
+.meter-card{background:#004d2a;border-radius:14px;padding:20px;color:#fff;margin-bottom:10px;position:relative;overflow:hidden}
+.meter-badge-sm{font-size:9px;font-weight:800;background:rgba(255,255,255,.1);padding:3px 8px;border-radius:5px;letter-spacing:1px}
+.meter-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.5px;margin-top:14px;margin-bottom:3px}
+.meter-val{font-size:24px;font-weight:900;letter-spacing:-1px}
+.meter-unit{color:#8DC63F;font-size:12px;margin-left:6px}
+.meter-bar{background:rgba(255,255,255,.1);height:4px;border-radius:3px;margin-top:10px;overflow:hidden}
+.meter-fill{background:#8DC63F;height:100%;width:85%;border-radius:3px}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-card{background:#fff;border:1px solid #f0f0f0;border-radius:10px;padding:11px}
+.mini-lbl{font-size:9px;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:3px}
+.mini-val{font-size:17px;font-weight:900;color:#1f2937}
+.mini-unit-sm{font-size:9px;color:#9ca3af;margin-left:3px}
+
+/* ===== LOG TABLE ===== */
+.log-wrap{background:#fff;border-radius:14px;border:1px solid #f0f0f0;overflow:hidden}
+.log-head-bar{padding:11px 16px;border-bottom:1px solid #f9fafb;background:rgba(249,250,251,.6);display:flex;align-items:center;gap:8px}
+.log-head-bar span{font-size:12px;font-weight:700;color:#1f2937}
+.log-head-bar svg{width:14px;height:14px;color:var(--green-mid)}
+.log-header{display:grid;grid-template-columns:repeat(5,1fr);background:#0D1F16;padding:10px 16px}
+.log-header span{font-size:9px;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px}
+.log-row{display:grid;grid-template-columns:repeat(5,1fr);padding:11px 16px;border-bottom:1px solid #f9fafb;align-items:center}
+.log-val{font-size:11px;font-weight:700;color:#374151}
+.log-badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:9px;font-weight:700;margin-top:3px}
+
+/* ===== SCHEDULES ===== */
+.table-wrap{background:#fff;border:1px solid rgba(0,122,61,.1);border-radius:12px;overflow:hidden}
+.table-head-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(0,122,61,.1)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead tr{background:#0D1F16}
+.tbl thead th{padding:10px 16px;text-align:left;font-size:9px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase}
+.tbl tbody td{padding:13px 16px;font-size:13px;color:#374151;border-bottom:1px solid #f9fafb}
+.tbl-empty{text-align:center;color:#7AA58A;font-size:13px;padding:44px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);align-items:center;justify-content:center;z-index:500}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:28px;width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-title{font-size:16px;font-weight:600;color:#0D1F16;margin-bottom:18px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.modal-field label{font-size:11px;font-weight:600;color:#3D6B52;display:block;margin-bottom:5px}
+.modal-field input{width:100%;padding:8px 10px;border:1px solid rgba(0,122,61,.2);border-radius:8px;font-size:13px;outline:none;color:#111}
+.modal-field input:focus{border-color:var(--green-mid)}
+.modal-btns{display:flex;justify-content:flex-end;gap:10px}
+.btn-discard{padding:8px 16px;border:1px solid rgba(0,122,61,.2);border-radius:8px;background:#fff;font-size:13px;color:#3D6B52;cursor:pointer}
+.btn-submit{padding:8px 18px;border-radius:8px;background:var(--green-mid);color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer}
+
+/* ===== HISTORY ===== */
+.hist-wrap{background:#fff;border-radius:14px;border:1px solid #f0f0f0;overflow:hidden}
+.hist-toolbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f9fafb;background:rgba(249,250,251,.5);flex-wrap:wrap;gap:10px}
+.hist-title{font-size:14px;font-weight:700;color:#0D1F16}
+.hist-sub{font-size:9px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:2px}
+.icon-btn-grp{display:flex;border:1px solid #e5e7eb;border-radius:9px;overflow:hidden}
+.icon-btn{padding:7px 10px;background:#fff;border:none;border-right:1px solid #e5e7eb;cursor:pointer;font-size:12px;color:#374151}
+.icon-btn:last-child{border-right:none}
+.icon-btn:hover{background:#f9fafb}
+.hist-tbl-head{display:grid;grid-template-columns:80px 150px 80px 100px 190px 1fr;background:#0D1F16;padding:11px 20px}
+.hist-tbl-head span{font-size:9px;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px}
+.hist-row{display:grid;grid-template-columns:80px 150px 80px 100px 190px 1fr;padding:11px 20px;border-bottom:1px solid #f9fafb;align-items:center}
+.hist-row:hover{background:rgba(0,122,61,.02)}
+.action-tag{background:#f3f4f6;color:#374151;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;background:rgba(249,250,251,.5);border-top:1px solid #f9fafb}
+.page-btn{width:32px;height:32px;border:1px solid #e5e7eb;background:#fff;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;color:#374151}
+.page-btn.ap{background:var(--green-mid);color:#fff;border-color:var(--green-mid)}
+
+/* ===== ERRORS ===== */
+.error-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.err-section{background:#fff;border-radius:14px;border:1px solid #f0f0f0;overflow:hidden}
+.err-header{padding:13px 16px;border-bottom:1px solid;display:flex;align-items:center;justify-content:space-between}
+.err-header.critical{background:#fef2f2;border-bottom-color:#fee2e2;color:#b91c1c}
+.err-header.warn-h{background:#fffbeb;border-bottom-color:#fef3c7;color:#92400e}
+.err-header-title{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;display:flex;align-items:center;gap:7px}
+.err-header-title svg{width:15px;height:15px}
+.err-count{font-size:9px;font-weight:700;padding:2px 8px;background:rgba(255,255,255,.55);border-radius:20px}
+.err-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #f9fafb}
+.err-row:hover{background:#f9fafb}
+.err-row:last-child{border-bottom:none}
+.err-name{font-size:12px;font-weight:700;color:#374151}
+.err-diag{font-size:9px;color:#9ca3af;font-weight:500;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.phase-badges{display:flex;gap:6px}
+.phase-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;border:1px solid}
+.ph-ok{background:#d1fae5;color:#065f46;border-color:#a7f3d0}
+.ph-warn{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.err-note{background:#f9fafb;border:1px solid #f0f0f0;border-radius:10px;padding:13px;display:flex;gap:10px;align-items:start}
+.err-note-text{font-size:11px;color:#6b7280;line-height:1.6}
+
+/* ===== DETAILS ===== */
+.details-top{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+.details-bot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.spec-card{background:#fff;border:1px solid rgba(0,122,61,.1);border-radius:12px;padding:18px}
+.spec-card-title{font-size:13px;font-weight:700;color:var(--green-mid);margin-bottom:12px}
+.spec-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:12px;border-bottom:1px solid rgba(0,122,61,.06)}
+.spec-row:last-child{border-bottom:none}
+.spec-label{color:#7AA58A;font-weight:500}
+.spec-val{font-family:monospace;font-weight:700;color:var(--green-mid)}
+.spec-val.warn{color:var(--orange)}
+
+/* ===== SETTINGS ===== */
+.settings-wrap{max-width:780px}
+.settings-section{background:#fff;border:1px solid #f0f0f0;border-radius:22px;padding:26px;margin-bottom:14px}
+.settings-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.settings-icon{width:40px;height:40px;background:rgba(0,122,61,.1);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.settings-section-title{font-size:14px;font-weight:700;color:#0D1F16}
+.settings-section-sub{font-size:9px;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:1.5px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px}
+.input-grp{display:flex;flex-direction:column;gap:5px}
+.input-grp label{font-size:9px;font-weight:800;text-transform:uppercase;color:#9ca3af;letter-spacing:1.5px}
+.settings-input{padding:10px 13px;border:1px solid #e5e7eb;border-radius:11px;font-size:13px;font-weight:600;background:#f9fafb;outline:none;color:#111}
+.settings-input:focus{border-color:var(--green-mid);background:#fff}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px;background:#f9fafb;border-radius:11px;border:1px solid #f0f0f0}
+.toggle-lbl{font-size:13px;font-weight:700;color:#1f2937}
+.toggle-sub{font-size:11px;color:#9ca3af;font-weight:500;margin-top:1px}
+.toggle-btn{width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;position:relative;transition:background .3s;flex-shrink:0}
+.toggle-btn.ton{background:var(--green-mid)}
+.toggle-btn.toff{background:#d1d5db}
+.t-knob{position:absolute;top:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.t-knob.kon{left:23px}
+.t-knob.koff{left:3px}
+.save-row{display:flex;justify-content:flex-end;padding:0 0 20px}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-left">
+    <div class="login-left-bg"></div>
+    <div class="login-left-radial"></div>
+    <div class="login-left-grad"></div>
+    <div class="login-left-glow"></div>
+    <div class="login-left-content">
+      <div class="login-logo-row">
+              <div class="login-logo-box">
+  <img src="https://companieslogo.com/img/orig/EFERT.PK-17dec9f8.png?t=1720244491" alt="Engro Logo" />
+</div>
+        <span class="login-brand">engro</span>
+      </div>
+      <div class="login-headline">Your growth,<br><em>our innovation</em></div>
+      <div class="login-accent-line"></div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-card">
+      <div class="login-card-version">WMS v2.0</div>
+      <div class="login-card-title">Admin Login</div>
+      <div class="login-card-sub">Authorized Access Only</div>
+      <div id="login-error" class="login-error">Invalid credentials. Please try again.</div>
+      <label class="login-field-label">Username</label>
+      <input class="login-input" type="text" id="uname" placeholder="e.g. admin_engro" autocomplete="username">
+      <label class="login-field-label">Password</label>
+      <input class="login-input" type="password" id="pword" placeholder="••••••••" autocomplete="current-password">
+      <div class="login-row">
+        <label class="login-remember"><input type="checkbox" id="remember"> Keep me signed in</label>
+        <button class="login-forgot">Forgot?</button>
+      </div>
+      <button class="login-btn" onclick="doLogin()">SECURE LOGIN</button>
+      <div class="login-footer">
+        <p>Encrypted Connection</p>
+        <div class="login-dots">
+          <span style="background:#8DC63F"></span>
+          <span style="background:#006738"></span>
+          <span style="background:#8DC63F"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD SCREEN ===== -->
+<div id="dashboard-screen">
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+            <div class="login-logo-box">
+  <img src="https://companieslogo.com/img/orig/EFERT.PK-17dec9f8.png?t=1720244491" alt="Engro Logo" />
+</div>
+      <span class="sb-brand">engro</span>
+      <span class="sb-version">WMS</span>
+    </div>
+    <div class="sb-section">Main Menu</div>
+    <div class="nav-item active" onclick="nav('overview',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Overview
+    </div>
+    <div class="nav-item" onclick="nav('device',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 0 0 4.93 19.07M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41"/></svg>Device Dashboard
+    </div>
+    <div class="nav-item" onclick="nav('schedules',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedules
+    </div>
+    <div class="nav-item" onclick="nav('history',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11A9 9 0 1 0 4 4.93"/><polyline points="1 5 3 7 5 5"/></svg>History
+    </div>
+    <div class="nav-item" onclick="nav('errors',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Errors
+    </div>
+    <div class="nav-item" onclick="nav('details',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Details
+    </div>
+    <div class="sb-section">System</div>
+    <div class="nav-item" onclick="nav('settings',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings
+    </div>
+    <div class="sb-footer">
+      <div class="nav-item" onclick="doLogout()">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title" id="page-title">Overview</div>
+        <div class="topbar-sub">Remote Well Management System — Engro Fertilizers</div>
+      </div>
+      <div class="topbar-right">
+        <div class="live-badge"><div class="live-dot"></div>Live</div>
+        <div class="topbar-date" id="topbar-date"></div>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
+        <div class="avatar" title="Admin User">AU</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ===== OVERVIEW ===== -->
+      <div class="page active" id="page-overview">
+         <div class="stat-grid">
+          <div class="stat-card" style="border-top-color:#007A3D">
+            <div class="stat-icon" style="background:#e8f5ee">
+              <svg fill="none" stroke="#007A3D" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="stat-lbl">Total Devices</div>
+            <div class="stat-val" style="color:#007A3D">80</div>
+            <div class="stat-sub">Connected: All</div>
+          </div>
+           <div class="stat-card" style="border-top-color:#007A3D">
+            <div class="stat-icon" style="background:#e8f5ee">
+              <svg fill="none" stroke="#007A3D" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="stat-lbl">Running Devices</div>
+            <div class="stat-val" style="color:#007A3D">72</div>
+            <div class="stat-sub">Running: 72</div>
+          </div>
+          <div class="stat-card" style="border-top-color:#ef4444">
+            <div class="stat-icon" style="background:#fee2e2">
+              <svg fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div class="stat-lbl">Maintenance</div>
+            <div class="stat-val" style="color:#ef4444">3</div>
+            <div class="stat-sub">Status: Normal</div>
+          </div>
+          <div class="stat-card" style="border-top-color:#f97316">
+            <div class="stat-icon" style="background:#ffedd5">
+              <svg fill="none" stroke="#f97316" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <div class="stat-lbl">Trip</div>
+            <div class="stat-val" style="color:#f97316">2</div>
+            <div class="stat-sub">Status: Critical</div>
+          </div>
+          <div class="stat-card" style="border-top-color:#f59e0b">
+            <div class="stat-icon" style="background:#fef3c7">
+              <svg fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="stat-lbl">Fault</div>
+            <div class="stat-val" style="color:#f59e0b">3</div>
+            <div class="stat-sub">Mechanical Issues</div>
+          </div>
+          <div class="stat-card" style="border-top-color:#2563eb">
+            <div class="stat-icon" style="background:#dbeafe">
+              <svg fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div class="stat-lbl">Total Units</div>
+            <div class="stat-val" style="color:#2563eb;font-size:16px">2,065,545</div>
+            <div class="stat-sub">kWh Consumed</div>
+          </div>
+        </div>
+
+
+        <div class="toolbar">
+          <div style="display:flex;align-items:center;gap:10px;flex:1">
+            <div class="search-wrap">
+              <div class="search-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+              <input type="text" id="dev-search" placeholder="Search by device ID or name..." oninput="filterDevices()">
+            </div>
+            <select class="filter-sel" id="dev-filter" onchange="filterDevices()">
+              <option value="ALL">All Status</option>
+              <option value="ON">Online</option>
+              <option value="OFF">Offline</option>
+              <option value="STDBY">Standby</option>
+            </select>
+          </div>
+          <button class="btn-g" onclick="exportCSV()">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Data
+          </button>
+        </div>
+
+        <div class="section-row">
+          <div class="section-title">
+            Network Infrastructure
+            <span class="count-badge" id="dev-count">8 Items</span>
+          </div>
+        </div>
+        <div class="device-grid" id="device-grid"></div>
+        <div class="empty-state" id="dev-empty" style="display:none">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <p>No devices match your search criteria.</p>
+        </div>
+      </div>
+
+      <!-- ===== DEVICE DASHBOARD ===== -->
+      <div class="page" id="page-device">
+        <div class="gauge-grid">
+          <div class="gauge-card">
+            <div class="gauge-lbl">System Power</div>
+            <svg width="80" height="80" viewBox="0 0 80 80" style="display:block;margin:0 auto 10px">
+              <circle cx="40" cy="40" r="36" stroke="#f3f4f6" stroke-width="6" fill="none"/>
+              <circle cx="40" cy="40" r="36" stroke="#007A3D" stroke-width="6" fill="none" stroke-dasharray="226" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              <text x="40" y="44" text-anchor="middle" font-size="18" fill="#007A3D">⚡</text>
+            </svg>
+            <div class="gauge-status">Running</div>
+            <div class="gauge-sub">Active Status</div>
+          </div>
+          <div class="gauge-card">
+            <div class="gauge-lbl">Phase Integrity</div>
+            <svg width="80" height="80" viewBox="0 0 80 80" style="display:block;margin:0 auto 10px">
+              <circle cx="40" cy="40" r="36" stroke="#f3f4f6" stroke-width="6" fill="none"/>
+              <circle cx="40" cy="40" r="36" stroke="#3b82f6" stroke-width="6" fill="none" stroke-dasharray="226" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              <text x="40" y="44" text-anchor="middle" font-size="18" fill="#3b82f6">↻</text>
+            </svg>
+            <div class="gauge-status">Normal</div>
+            <div class="gauge-sub">No Drift Detected</div>
+          </div>
+          <div class="gauge-card">
+            <div class="gauge-lbl">Trip Guard</div>
+            <svg width="80" height="80" viewBox="0 0 80 80" style="display:block;margin:0 auto 10px">
+              <circle cx="40" cy="40" r="36" stroke="#f3f4f6" stroke-width="6" fill="none"/>
+              <circle cx="40" cy="40" r="36" stroke="#e5e7eb" stroke-width="6" fill="none" stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              <text x="40" y="44" text-anchor="middle" font-size="18" fill="#9ca3af">✓</text>
+            </svg>
+            <div class="gauge-status">No Trip</div>
+            <div class="gauge-sub">Safe Operation</div>
+          </div>
+          <div class="gauge-card">
+            <div class="gauge-lbl">Next Service</div>
+            <svg width="80" height="80" viewBox="0 0 80 80" style="display:block;margin:0 auto 10px">
+              <circle cx="40" cy="40" r="36" stroke="#f3f4f6" stroke-width="6" fill="none"/>
+              <circle cx="40" cy="40" r="36" stroke="#f97316" stroke-width="6" fill="none" stroke-dasharray="226" stroke-dashoffset="57" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              <text x="40" y="44" text-anchor="middle" font-size="14" fill="#f97316">⏱</text>
+            </svg>
+            <div class="gauge-status">In 12 Days</div>
+            <div class="gauge-sub">Due: 30 May</div>
+          </div>
+        </div>
+
+        <div class="analytics-row">
+          <div class="card-w">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:14px">
+              <div><div class="card-title">Consumption Analytics</div><div class="card-sub">Real-time vs Historical Load</div></div>
+              <div class="legend-row">
+                <div class="legend-pill" style="background:#f0fdf4;color:#007A3D"><div style="width:6px;height:6px;border-radius:50%;background:#007A3D"></div>Current</div>
+                <div class="legend-pill" style="background:#f9fafb;color:#9ca3af"><div style="width:6px;height:6px;border-radius:50%;background:#d1d5db"></div>Average</div>
+              </div>
+            </div>
+            <svg width="100%" height="200" viewBox="0 0 500 200" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#007A3D" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#007A3D" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="50" x2="500" y2="50" stroke="#f1f5f9" stroke-width="1"/>
+              <line x1="0" y1="100" x2="500" y2="100" stroke="#f1f5f9" stroke-width="1"/>
+              <line x1="0" y1="150" x2="500" y2="150" stroke="#f1f5f9" stroke-width="1"/>
+              <path d="M0,155 C40,130 80,175 130,105 C170,45 210,125 250,90 C290,55 330,140 380,75 C420,28 460,105 500,85 L500,200 L0,200 Z" fill="url(#ag)"/>
+              <path d="M0,155 C40,130 80,175 130,105 C170,45 210,125 250,90 C290,55 330,140 380,75 C420,28 460,105 500,85" fill="none" stroke="#007A3D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M0,165 C50,148 100,168 150,125 C200,82 240,142 280,112 C320,82 360,128 400,98 C440,72 470,115 500,100" fill="none" stroke="#8DC63F" stroke-width="2" stroke-dasharray="6,5"/>
+              <text x="10" y="195" font-size="9" fill="#94a3b8">12 AM</text>
+              <text x="110" y="195" font-size="9" fill="#94a3b8">04 AM</text>
+              <text x="210" y="195" font-size="9" fill="#94a3b8">08 AM</text>
+              <text x="310" y="195" font-size="9" fill="#94a3b8">12 PM</text>
+              <text x="420" y="195" font-size="9" fill="#94a3b8">08 PM</text>
+            </svg>
+          </div>
+          <div>
+            <div class="meter-card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:7px">
+                  <svg width="16" height="16" fill="none" stroke="#8DC63F" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <span class="meter-badge-sm">METER 01</span>
+              </div>
+              <div class="meter-lbl">Total Lifetime Usage</div>
+              <div class="meter-val">993,017,436<span class="meter-unit">kWh</span></div>
+              <div class="meter-bar"><div class="meter-fill"></div></div>
+            </div>
+            <div class="mini-grid">
+              <div class="mini-card"><div class="mini-lbl">Amperage</div><div class="mini-val">0.04<span class="mini-unit-sm">A</span></div></div>
+              <div class="mini-card"><div class="mini-lbl">Wattage</div><div class="mini-val">0.42<span class="mini-unit-sm">W</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="log-wrap">
+          <div class="log-head-bar">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Detailed Operational Logs</span>
+          </div>
+          <div class="log-header">
+            <span>Run Time Today</span><span>Last Peak Usage</span><span>Total Run Hours</span><span>Last Maintenance</span><span>Last Sync</span>
+          </div>
+          <div class="log-row">
+            <div><div class="log-val">0.00 Hours</div><div class="log-badge" style="background:#e8f5ee;color:#007A3D">Active</div></div>
+            <div><div class="log-val">Never</div><div class="log-badge" style="background:#f3f4f6;color:#9ca3af">—</div></div>
+            <div><div class="log-val">0 Hours</div><div class="log-badge" style="background:#e8f5ee;color:#007A3D">OK</div></div>
+            <div><div class="log-val">Never</div><div class="log-badge" style="background:#fff7ed;color:#c2410c">Check</div></div>
+            <div><div class="log-val" style="font-size:10px">18 April 2026, 07:16 PM</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SCHEDULES ===== -->
+      <div class="page" id="page-schedules">
+        <div class="table-wrap">
+          <div class="table-head-bar">
+            <span style="font-size:14px;font-weight:600;color:#0D1F16">All Schedules</span>
+            <button class="btn-g" onclick="openModal()">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Add New Schedule
+            </button>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Schedule</th><th>Status</th><th>Tag Phone</th><th>Tag</th><th>Start Time</th><th>End Time</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="7" class="tbl-empty">No records found. Add a new schedule to get started.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Modal -->
+        <div class="modal-overlay" id="sched-modal">
+          <div class="modal-box">
+            <div class="modal-title">Add Schedule</div>
+            <div class="modal-grid">
+              <div class="modal-field"><label>Start Time</label><input type="datetime-local"></div>
+              <div class="modal-field"><label>End Time</label><input type="datetime-local"></div>
+              <div class="modal-field"><label>Tag Name</label><input type="text" placeholder="Tag Name"></div>
+              <div class="modal-field"><label>Tag Phone</label><input type="text" placeholder="Tag Phone"></div>
+            </div>
+            <div class="modal-btns">
+              <button class="btn-discard" onclick="closeModal()">Discard</button>
+              <button class="btn-submit" onclick="closeModal()">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HISTORY ===== -->
+      <div class="page" id="page-history">
+        <div class="hist-wrap">
+          <div class="hist-toolbar">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="background:rgba(0,122,61,.1);border-radius:9px;padding:8px;color:var(--green-mid)">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11A9 9 0 1 0 4 4.93"/><polyline points="1 5 3 7 5 5"/></svg>
+              </div>
+              <div><div class="hist-title">System Event Logs</div><div class="hist-sub">Audit Trail & Operational History</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div class="icon-btn-grp">
+                <button class="icon-btn" title="Copy" onclick="histCopy()">⎘</button>
+                <button class="icon-btn" title="Export Excel" style="color:var(--green-mid)" onclick="histExport()">⊞</button>
+                <button class="icon-btn" title="Export PDF" style="color:#ef4444">⊟</button>
+              </div>
+              <div class="search-wrap" style="max-width:190px">
+                <div class="search-ico"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+                <input type="text" placeholder="Search logs..." id="hist-search" oninput="filterHist()">
+              </div>
+              <select class="filter-sel" style="font-size:12px" id="hist-filter" onchange="filterHist()">
+                <option value="All">All Events</option>
+                <option value="ON">Motor Starts</option>
+                <option value="OFF">Motor Stops</option>
+              </select>
+            </div>
+          </div>
+          <div class="hist-tbl-head">
+            <span>Status</span><span>Identity</span><span>Runtime</span><span>Energy kWh</span><span>Timestamp</span><span>Activity</span>
+          </div>
+          <div id="hist-body"></div>
+          <div class="pagination">
+            <span style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1.5px">Showing <span id="hist-count" style="color:#1f2937">7</span> entries</span>
+            <div style="display:flex;align-items:center;gap:5px">
+              <button class="page-btn">‹</button>
+              <button class="page-btn ap">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ERRORS ===== -->
+      <div class="page" id="page-errors">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <svg width="18" height="18" fill="none" stroke="#007A3D" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#1f2937">Security & Integrity Monitor</div>
+            <div style="font-size:11px;color:#9ca3af;font-weight:500">Real-time phase analysis and direction validation</div>
+          </div>
+        </div>
+        <div class="error-grid">
+          <div class="err-section">
+            <div class="err-header critical">
+              <div class="err-header-title">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Critical Errors
+              </div>
+              <span class="err-count">4 Parameters</span>
+            </div>
+            <div id="err-critical-body"></div>
+          </div>
+          <div class="err-section">
+            <div class="err-header warn-h">
+              <div class="err-header-title">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                System Warnings
+              </div>
+              <span class="err-count">5 Parameters</span>
+            </div>
+            <div id="err-warn-body"></div>
+          </div>
+        </div>
+        <div class="err-note">
+          <div style="background:#fff;padding:6px;border-radius:7px;border:1px solid #e5e7eb;color:#9ca3af;flex-shrink:0">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <p class="err-note-text">
+            <strong style="color:#374151">Protocol Note:</strong> All statuses marked as <span style="color:#059669;font-weight:700">OK</span> indicate the system is operating within defined nominal range. <span style="color:#d97706;font-weight:700">WARN</span> states should be investigated during the next scheduled maintenance cycle to prevent phase degradation.
+          </p>
+        </div>
+      </div>
+
+      <!-- ===== DETAILS ===== -->
+      <div class="page" id="page-details">
+        <div style="font-size:16px;font-weight:600;color:#0D1F16;margin-bottom:16px">
+          Tube Well No: <span style="color:var(--green-mid)">P-254 D</span>
+        </div>
+        <div class="details-top">
+          <div class="spec-card">
+            <div class="spec-card-title">Mechanical Specification</div>
+            <div class="spec-row"><span class="spec-label">Pump Type</span><span class="spec-val">Centrifugal</span></div>
+            <div class="spec-row"><span class="spec-label">Head Size</span><span class="spec-val">8.4 ~ 249m</span></div>
+            <div class="spec-row"><span class="spec-label">Flow Rate</span><span class="spec-val">0 ~ 2.8 m³/h</span></div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-title">Status</div>
+            <div class="spec-row"><span class="spec-label">Status</span><span class="spec-val"><span style="background:#e8f5ee;padding:2px 10px;border-radius:6px">ON</span></span></div>
+            <div class="spec-row"><span class="spec-label">Running Time</span><span class="spec-val">4 hours</span></div>
+            <div class="spec-row"><span class="spec-label">Total Running Time</span><span class="spec-val">1,024 hours</span></div>
+          </div>
+        </div>
+        <div class="details-bot">
+          <div class="spec-card">
+            <div class="spec-card-title">Electrical Specification</div>
+            <div class="spec-row"><span class="spec-label">Transformer Rating</span><span class="spec-val">60 kVA</span></div>
+            <div class="spec-row"><span class="spec-label">Motor Rating</span><span class="spec-val">50 kVA</span></div>
+            <div class="spec-row"><span class="spec-label">Motor Current</span><span class="spec-val">135 Amp</span></div>
+            <div class="spec-row"><span class="spec-label">Motor RPM</span><span class="spec-val">1450</span></div>
+            <div class="spec-row"><span class="spec-label">Motor Voltage</span><span class="spec-val">415 V</span></div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-title">Maintenance & Installation</div>
+            <div class="spec-row"><span class="spec-label">Installation Date</span><span class="spec-val">04-03-2023</span></div>
+            <div class="spec-row"><span class="spec-label">Last Maintenance</span><span class="spec-val">05-03-2023</span></div>
+            <div class="spec-row"><span class="spec-label">Due Maintenance</span><span class="spec-val warn">04-04-2023</span></div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-title">Well Water Analysis</div>
+            <div class="spec-row"><span class="spec-label">Cond (µs/cm)</span><span class="spec-val">342</span></div>
+            <div class="spec-row"><span class="spec-label">Ca (ppm)</span><span class="spec-val">48.2</span></div>
+            <div class="spec-row"><span class="spec-label">Mg (ppm)</span><span class="spec-val">12.7</span></div>
+            <div class="spec-row"><span class="spec-label">So (ppm)</span><span class="spec-val">38.0</span></div>
+            <div class="spec-row"><span class="spec-label">Cl (ppm)</span><span class="spec-val">55.1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS ===== -->
+      <div class="page" id="page-settings">
+        <div class="settings-wrap">
+          <div class="settings-section">
+            <div class="settings-head">
+              <div class="settings-icon">👤</div>
+              <div><div class="settings-section-title">Account Identity</div><div class="settings-section-sub">Personal & Contact Information</div></div>
+            </div>
+            <div class="input-grid">
+              <div class="input-grp"><label>Full Name</label><input class="settings-input" value="Admin User"></div>
+              <div class="input-grp"><label>Email Address</label><input class="settings-input" type="email" value="admin@engro.com"></div>
+              <div class="input-grp"><label>Phone Number</label><input class="settings-input" value="+92 300 1234567"></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-head">
+              <div class="settings-icon">🔒</div>
+              <div><div class="settings-section-title">Access & Security</div><div class="settings-section-sub">Authentication Management</div></div>
+            </div>
+            <div class="input-grid" style="margin-bottom:14px">
+              <div class="input-grp"><label>Current Password</label><input class="settings-input" type="password" placeholder="••••••••"></div>
+              <div class="input-grp"><label>New Password</label><input class="settings-input" type="password" placeholder="Enter new password"></div>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-lbl">Two-Factor Authentication (2FA)</div><div class="toggle-sub">Requires a code from your mobile device to log in.</div></div>
+              <button class="toggle-btn ton" onclick="toggleBtn(this)"><div class="t-knob kon"></div></button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-head">
+              <div class="settings-icon">🔔</div>
+              <div><div class="settings-section-title">Interface Preferences</div><div class="settings-section-sub">Visuals & Notification Controls</div></div>
+            </div>
+            <div class="input-grid">
+              <div class="toggle-row">
+                <div><div class="toggle-lbl">Critical Alerts</div><div class="toggle-sub">Push notifications for hardware trips.</div></div>
+                <button class="toggle-btn ton" onclick="toggleBtn(this)"><div class="t-knob kon"></div></button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-lbl">Dark Appearance</div><div class="toggle-sub">Optimize for low-light environments.</div></div>
+                <button class="toggle-btn toff" onclick="toggleBtn(this)"><div class="t-knob koff"></div></button>
+              </div>
+            </div>
+          </div>
+          <div class="save-row">
+            <button class="btn-g" style="padding:12px 28px;font-size:14px" onclick="alert('Settings saved successfully.')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end .content -->
+  </div><!-- end .main-wrap -->
+</div><!-- end .app -->
+</div><!-- end #dashboard-screen -->
+
+<script>
+/* ===== DATA ===== */
+const DEVICES=[
+  {name:"P-254 A",status:"ON",hours:120,units:100},
+  {name:"P-254 B",status:"ON",hours:98,units:85},
+  {name:"P-254 C",status:"OFF",hours:145,units:112},
+  {name:"P-254 D",status:"ON",hours:210,units:190},
+  {name:"P-254 E",status:"OFF",hours:45,units:30},
+  {name:"Pump #6",status:"STDBY",hours:12,units:5},
+  {name:"Pump #7",status:"STDBY",hours:0,units:0},
+  {name:"Pump #8",status:"ON",hours:320,units:280},
+];
+const HIST=[
+  {status:"OFF",tag:"T-01",phone:"+92 300...",runtime:0,energy:0,date:"02-05-2023 12:39 PM",action:"Unknown 44"},
+  {status:"OFF",tag:"T-02",phone:"+92 301...",runtime:0,energy:0,date:"02-05-2023 12:39 PM",action:"Trip error Removed"},
+  {status:"ON",tag:"Admin",phone:"+92 333...",runtime:45,energy:0.34,date:"02-05-2023 12:39 PM",action:"Electricity Supply ON"},
+  {status:"OFF",tag:"System",phone:"N/A",runtime:0,energy:0,date:"02-05-2023 12:39 PM",action:"Turned OFF Manually"},
+  {status:"OFF",tag:"T-01",phone:"+92 300...",runtime:0,energy:0.34,date:"02-05-2023 12:40 PM",action:"Unknown 42"},
+  {status:"OFF",tag:"T-01",phone:"+92 300...",runtime:0,energy:0.34,date:"02-05-2023 12:40 PM",action:"Unknown 42"},
+  {status:"OFF",tag:"System",phone:"N/A",runtime:0,energy:0,date:"02-05-2023 12:40 PM",action:"Trip error Occurred"},
+];
+const ERR_CRITICAL=["Phase Loss Detected","Voltage Sag Threshold","Phase Sequence Mismatch","Current Sequence Anomaly"];
+const ERR_WARN=[
+  {name:"Total KW Direction Reversal",st:"ok"},
+  {name:"Total Kvar Direction Reversal",st:"ok"},
+  {name:"CF1 Direction Status",st:"ok"},
+  {name:"CF2 Direction Status",st:"warn"},
+  {name:"Neutral Current Threshold",st:"ok"},
+];
+const PAGE_TITLES={overview:"Overview",device:"Device Dashboard",schedules:"Schedules",history:"History",errors:"Errors",details:"Details — P-254 D",settings:"Settings"};
+
+/* ===== LOGIN ===== */
+function doLogin(){
+  const u=document.getElementById('uname').value.trim();
+  const p=document.getElementById('pword').value;
+  const err=document.getElementById('login-error');
+  if(u==='admin'&&p==='123456'){
+    err.style.display='none';
+    if(document.getElementById('remember').checked)
+      localStorage.setItem('wms_user',JSON.stringify({username:u}));
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard-screen').style.display='block';
+    initDashboard();
+  } else {
+    err.style.display='block';
+    document.getElementById('pword').value='';
+  }
+}
+document.getElementById('pword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('uname').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('pword').focus()});
+
+/* Auto-login if remembered */
+window.addEventListener('load',()=>{
+  const stored=localStorage.getItem('wms_user');
+  if(stored){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard-screen').style.display='block';
+    initDashboard();
+  }
+  updateDate();
+  setInterval(updateDate,1000);
+});
+
+function doLogout(){
+  localStorage.removeItem('wms_user');
+  document.getElementById('dashboard-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('uname').value='';
+  document.getElementById('pword').value='';
+}
+
+/* ===== DASHBOARD INIT ===== */
+function initDashboard(){
+  renderDevices(DEVICES);
+  renderHistory(HIST);
+  renderErrors();
+}
+
+/* ===== DATE ===== */
+function updateDate(){
+  const el=document.getElementById('topbar-date');
+  if(el) el.textContent=new Date().toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'})+', '+new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ===== NAVIGATION ===== */
+function nav(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent=PAGE_TITLES[id]||id;
+}
+
+/* ===== DEVICE RENDER ===== */
+function renderDevices(list){
+  const g=document.getElementById('device-grid');
+  const empty=document.getElementById('dev-empty');
+  document.getElementById('dev-count').textContent=list.length+' Items';
+  if(!list.length){g.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  g.innerHTML=list.map(d=>{
+    const cls=d.status==='ON'?'on':d.status==='OFF'?'off':'stdby';
+    const pill=d.status==='ON'?'pill-on':d.status==='OFF'?'pill-off':'pill-stdby';
+    const dot=d.status==='ON'?'sdot-on':d.status==='OFF'?'sdot-off':'sdot-stdby';
+    return`<div class="device-card ${cls}" onclick="goDevice('${d.name}')">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
+        <div><div class="dev-id-lbl">System ID</div><div class="dev-name">${d.name}</div></div>
+        <div class="status-pill ${pill}"><div class="sdot ${dot}"></div>${d.status}</div>
+      </div>
+      <div class="dev-row"><span class="dev-row-lbl">Run Time</span><span class="dev-row-val">${d.hours}h</span></div>
+      <div class="dev-row" style="margin-top:4px"><span class="dev-row-lbl">Total Load</span><span class="dev-row-val">${d.units} kWh</span></div>
+    </div>`;
+  }).join('');
+}
+
+function filterDevices(){
+  const q=document.getElementById('dev-search').value.toLowerCase();
+  const f=document.getElementById('dev-filter').value;
+  renderDevices(DEVICES.filter(d=>d.name.toLowerCase().includes(q)&&(f==='ALL'||d.status===f)));
+}
+
+function goDevice(name){
+  const navItem=document.querySelectorAll('.nav-item')[1];
+  nav('device',navItem);
+}
+
+function exportCSV(){
+  const rows=DEVICES.map(d=>`${d.name},${d.status},${d.hours},${d.units}`);
+  const csv='Device Name,Status,Hours,Units (kWh)\n'+rows.join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Engro_Device_Report.csv';
+  a.click();
+}
+
+/* ===== HISTORY ===== */
+function renderHistory(list){
+  const b=document.getElementById('hist-body');
+  document.getElementById('hist-count').textContent=list.length;
+  b.innerHTML=list.map(r=>`
+    <div class="hist-row">
+      <div><span class="status-pill ${r.status==='ON'?'pill-on':'pill-off'}"><div class="sdot ${r.status==='ON'?'sdot-on':'sdot-off'}"></div>${r.status}</span></div>
+      <div><div style="font-size:12px;font-weight:700;color:#1f2937">${r.tag}</div><div style="font-size:10px;color:#9ca3af;font-family:monospace">${r.phone}</div></div>
+      <div style="font-size:12px;font-weight:700;color:#374151;font-family:monospace">${r.runtime}<span style="font-size:9px;color:#9ca3af"> min</span></div>
+      <div style="font-size:12px;font-weight:700;color:#007A3D;font-family:monospace">${r.energy}</div>
+      <div style="font-size:11px;font-weight:600;color:#6b7280">⏱ ${r.date}</div>
+      <div><span class="action-tag">${r.action}</span></div>
+    </div>`).join('');
+}
+
+function filterHist(){
+  const q=document.getElementById('hist-search').value.toLowerCase();
+  const f=document.getElementById('hist-filter').value;
+  renderHistory(HIST.filter(r=>{
+    const ms=r.tag.toLowerCase().includes(q)||r.action.toLowerCase().includes(q);
+    const mf=f==='All'||r.status===f;
+    return ms&&mf;
+  }));
+}
+
+function histCopy(){
+  const text=HIST.map(r=>`${r.date} - ${r.tag} - ${r.action}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>alert('Copied to clipboard!'));
+}
+
+function histExport(){
+  const csv='Date,Tag,Status,Action\n'+HIST.map(r=>`${r.date},${r.tag},${r.status},${r.action}`).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='history_export.csv';
+  a.click();
+}
+
+/* ===== ERRORS ===== */
+function renderErrors(){
+  const c=document.getElementById('err-critical-body');
+  c.innerHTML=ERR_CRITICAL.map(n=>`
+    <div class="err-row">
+      <div><div class="err-name">${n}</div><div class="err-diag">Diagnostic ID: SIG-882</div></div>
+      <div class="phase-badges">
+        <span class="phase-badge ph-ok"><div style="width:5px;height:5px;border-radius:50%;background:#10b981"></div>L1 ✓</span>
+        <span class="phase-badge ph-ok"><div style="width:5px;height:5px;border-radius:50%;background:#10b981"></div>L2 ✓</span>
+        <span class="phase-badge ph-ok"><div style="width:5px;height:5px;border-radius:50%;background:#10b981"></div>L3 ✓</span>
+      </div>
+    </div>`).join('');
+  const w=document.getElementById('err-warn-body');
+  w.innerHTML=ERR_WARN.map(r=>`
+    <div class="err-row">
+      <div><div class="err-name">${r.name}</div><div class="err-diag">Diagnostic ID: SIG-882</div></div>
+      <div class="phase-badges">
+        <span class="phase-badge ${r.st==='warn'?'ph-warn':'ph-ok'}">
+          <div style="width:5px;height:5px;border-radius:50%;background:${r.st==='warn'?'#f59e0b':'#10b981'}"></div>
+          L3 ${r.st==='warn'?'!':'✓'}
+        </span>
+      </div>
+    </div>`).join('');
+}
+
+/* ===== SCHEDULES MODAL ===== */
+function openModal(){document.getElementById('sched-modal').classList.add('open')}
+function closeModal(){document.getElementById('sched-modal').classList.remove('open')}
+document.getElementById('sched-modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+/* ===== SETTINGS TOGGLES ===== */
+function toggleBtn(btn){
+  const knob=btn.querySelector('.t-knob');
+  if(btn.classList.contains('ton')){btn.classList.replace('ton','toff');knob.classList.replace('kon','koff');}
+  else{btn.classList.replace('toff','ton');knob.classList.replace('koff','kon');}
+}
+</script>
+</body>
+</html>
