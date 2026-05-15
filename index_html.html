@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Punjab College — AIRPro Smart Campus System</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<!-- LOGIN STYLES -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif}
+body{display:block;overflow-x:hidden}
+#login-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:stretch}
+.login-left{flex:1.1;background:#1a0a1046;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:0;position:relative;overflow:hidden}
+.login-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:0}
+.login-left-overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(134, 134, 134, 0.27) 0%, rgba(10, 3, 6, 0.111) 50%, rgba(10, 3, 6, 0.067) 100%);z-index:1;pointer-events:none}
+.login-left-inner{position:relative;z-index:2;text-align:left;max-width:480px;padding:48px 44px;}
+.pgc-logo-wrap{width:140px;height:140px;border-radius:28px;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.pgc-logo-wrap img{width:96px;height:96px;object-fit:contain;filter:brightness(10)}
+.pgc-logo-fallback{font-size:38px;font-weight:900;color:#fff}
+.login-tagline{font-size:42px;font-weight:900;color:#fff;letter-spacing:-.8px;line-height:1.15;margin-bottom:14px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
+.login-tagline span{color:#FFB81C}
+.login-sub{font-size:14px;color:rgba(255,255,255,.78);font-weight:500;line-height:1.65;margin-bottom:6px}
+.login-badges{display:flex;gap:8px;justify-content:flex-start;flex-wrap:wrap;margin-top:22px}
+.login-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85)}
+.login-right{flex:0 0 430px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 44px;box-shadow:-8px 0 40px rgba(0,0,0,.15)}
+.login-form-wrap{width:100%;max-width:340px}
+.login-form-logo{display:flex;align-items:center;gap:12px;margin-bottom:34px}
+.lfl-mark{width:48px;height:48px;border-radius:12px;background:linear-gradient(140deg,#8B1A2D,#1B2F5E);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(139,26,45,.35);overflow:hidden}
+.lfl-mark img{width:32px;height:32px;object-fit:contain;filter:brightness(10)}
+.lfl-text{font-size:15px;font-weight:900;color:#1A0A10;line-height:1.2}
+.lfl-text small{display:block;font-size:10.5px;font-weight:500;color:#6b7280;margin-top:1px}
+.login-heading{font-size:25px;font-weight:900;color:#1A0A10;letter-spacing:-.4px;margin-bottom:4px}
+.login-heading-sub{font-size:12.5px;color:#6b7280;font-weight:500;margin-bottom:28px}
+.lf-group{margin-bottom:16px}
+.lf-label{display:block;font-size:11px;font-weight:800;color:#374151;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.lf-input{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:13.5px;font-family:'Plus Jakarta Sans',sans-serif;color:#1A0A10;outline:none;transition:.2s;background:#fafafa}
+.lf-input:focus{border-color:#8B1A2D;box-shadow:0 0 0 3px rgba(139,26,45,.12);background:#fff}
+.lf-input::placeholder{color:#9ca3af}
+.lf-error{background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:10px 14px;font-size:12px;color:#b91c1c;font-weight:600;margin-bottom:14px;display:none;align-items:center;gap:8px}
+.lf-error.show{display:flex}
+.login-btn{width:100%;padding:13px;background:linear-gradient(135deg,#8B1A2D,#1B2F5E);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(139,26,45,.35);display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.login-btn:hover{background:linear-gradient(135deg,#6B0F1F,#0F1F3D);transform:translateY(-1px)}
+.login-btn:disabled{opacity:.7;cursor:not-allowed;transform:none}
+.login-hint{text-align:center;font-size:11px;color:#9ca3af;margin-top:18px;font-weight:500}
+.login-footer{font-size:10.5px;color:#d1d5db;text-align:center;margin-top:28px;line-height:1.7}
+.login-spinner{display:none;width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:lspin .6s linear infinite}
+.login-spinner.show{display:inline-block}
+@keyframes lspin{to{transform:rotate(360deg)}}
+#app-shell{display:none;width:100%;min-height:100vh}
+</style>
+
+<!-- DASHBOARD STYLES -->
+<style>
+:root {
+  --bg: #f8f5f6;
+  --surface: #ffffff;
+  --surface2: #fdf8f9;
+  --border: #e8dde0;
+  --border2: #d4c5c9;
+  --text1: #0d1526;
+  --text2: #4a5568;
+  --text3: #94a3b8;
+  --blue: #8B1A2D;
+  --blue-d: #6B0F1F;
+  --blue-l: #F5E6E9;
+  --blue-m: #A52035;
+  --green: #1B2F5E;
+  --green-l: #E8EDF5;
+  --yellow: #b45309;
+  --yellow-l: #fef3c7;
+  --red: #c0192e;
+  --red-l: #fee2e2;
+  --orange: #c2410c;
+  --orange-l: #ffedd5;
+  --purple: #5b21b6;
+  --purple-l: #ede9fe;
+  --teal: #243A6E;
+  --teal-l: #dde4f0;
+  --sb: 240px;
+  --top: 62px;
+  --r: 12px;
+  --sh: 0 1px 4px rgba(0,0,0,.06), 0 4px 14px rgba(0,0,0,.07);
+  --sh2: 0 6px 24px rgba(0,0,0,.12), 0 16px 40px rgba(0,0,0,.08);
+  --sh3: 0 2px 8px rgba(139,26,45,.22);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  display: flex;
+  min-height: 100vh;
+  font-size: 13.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ── SIDEBAR ── */
+.sb {
+  width: var(--sb);
+  background: #1A0A10;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 200;
+  overflow-y: auto;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.sb-logo {
+  padding: 20px 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+}
+.lmark {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(140deg, #8B1A2D, #1B2F5E);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: #fff; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(139,26,45,.4);
+}
+.ltext { font-size: 12.5px; font-weight: 800; line-height: 1.25; color: #fff; }
+.ltext small { display: block; font-size: 9.5px; font-weight: 500; color: rgba(255,255,255,.45); margin-top: 1px; letter-spacing: .02em; }
+.sb-sec {
+  padding: 16px 18px 5px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+}
+.nv {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  margin: 1.5px 8px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 12.5px; font-weight: 500;
+  color: rgba(255,255,255,.6);
+  transition: .15s;
+  border: none; background: none;
+  width: calc(100% - 16px);
+  text-align: left;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.nv:hover { background: rgba(255,255,255,.08); color: #fff; }
+.nv.active { background: rgba(255,255,255,.12); color: #fff; font-weight: 700; }
+.nv .ico { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.nv-b {
+  margin-left: auto;
+  background: var(--red);
+  color: #fff;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 6px; border-radius: 99px;
+  min-width: 18px; text-align: center;
+}
+.sb-bot {
+  margin-top: auto;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+.av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, #8B1A2D, #1B2F5E);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 11px; flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,122,61,.4);
+}
+.sb-user-info { flex: 1; min-width: 0; }
+.sb-user-name { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-role { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 1px; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height: var(--top);
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 22px;
+  gap: 10px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,.10);
+  min-width: 0; overflow: hidden;
+  flex-shrink: 0;
+}
+.tb-t { font-size: 15px; font-weight: 800; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -.2px; }
+.tb-c {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text2);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 5px 10px; border-radius: 7px;
+  white-space: nowrap;
+}
+.ib {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 15px;
+  position: relative; transition: .15s;
+}
+.ib:hover { background: var(--blue-l); border-color: var(--blue); }
+.nd {
+  width: 8px; height: 8px;
+  background: var(--red); border-radius: 50%;
+  position: absolute; top: 4px; right: 4px;
+  border: 2px solid var(--surface);
+}
+.campus-sel {
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  font-size: 12px; color: var(--text1);
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  min-width: 180px;
+  outline: none;
+  transition: .15s;
+}
+.campus-sel:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(139,26,45,.15); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sb); flex: 1; display: flex; flex-direction: column; min-width: 0; max-width: calc(100vw - var(--sb)); overflow-x: hidden; height: 100vh; overflow-y: auto; }
+.page { display: none; padding: 22px; flex-direction: column; gap: 18px; min-width: 0; overflow-x: hidden; }
+.page.active { display: flex; }
+
+/* ── PAGE HEADER ── */
+.ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ph-t { font-size: 20px; font-weight: 900; letter-spacing: -.4px; }
+.ph-s { font-size: 12px; color: var(--text2); margin-top: 3px; font-weight: 500; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+}
+.ch {
+  padding: 14px 18px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border); gap: 8px;
+}
+.ct { font-size: 13px; font-weight: 800; letter-spacing: -.1px; }
+.cb { padding: 16px 18px; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: .15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap;
+  letter-spacing: -.1px;
+}
+.btn-p { background: var(--blue); color: #fff; box-shadow: var(--sh3); }
+.btn-p:hover { background: var(--blue-d); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(139,26,45,.3); }
+.btn-o { background: var(--surface); color: var(--text1); border: 1px solid var(--border); }
+.btn-o:hover { background: var(--surface2); border-color: var(--border2); }
+.btn-r { background: var(--red); color: #fff; }
+.btn-r:hover { background: #a01224; }
+.btn-g { background: var(--green); color: #fff; }
+.btn-sm { padding: 6px 13px; font-size: 11.5px; }
+.btn-xs { padding: 4px 9px; font-size: 11px; border-radius: 7px; cursor: pointer; border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
+.bxb { background: var(--blue-l); color: var(--blue); }
+.bxb:hover { background: var(--blue); color: #fff; }
+.bxr { background: var(--red-l); color: var(--red); }
+.bxr:hover { background: var(--red); color: #fff; }
+.bxg { background: var(--green-l); color: var(--green); }
+.bxg:hover { background: var(--green); color: #fff; }
+
+/* ── PILLS ── */
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 99px;
+  font-size: 10.5px; font-weight: 700;
+  white-space: nowrap; letter-spacing: -.05px;
+}
+.p-g { background: var(--green-l); color: var(--green); }
+.p-y { background: var(--yellow-l); color: var(--yellow); }
+.p-r { background: var(--red-l); color: var(--red); }
+.p-b { background: var(--blue-l); color: var(--blue); }
+.p-p { background: var(--purple-l); color: var(--purple); }
+.p-gr { background: #f1f5f9; color: #64748b; }
+.p-o { background: var(--orange-l); color: var(--orange); }
+.p-t { background: var(--teal-l); color: var(--teal); }
+
+/* ── KPI GRID ── */
+.kpig { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; min-width: 0; }
+.kc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  box-shadow: var(--sh);
+  position: relative; overflow: hidden;
+  cursor: default; transition: .2s;
+}
+.kc:hover { transform: translateY(-2px); box-shadow: var(--sh2); }
+.kc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--r) var(--r) 0 0;
+}
+.kc.kb::before { background: var(--blue); }
+.kc.kg::before { background: var(--green); }
+.kc.ky::before { background: var(--yellow); }
+.kc.kr::before { background: var(--red); }
+.kc.kp::before { background: var(--purple); }
+.kc.kt::before { background: var(--teal); }
+.kc-i { font-size: 20px; margin-bottom: 9px; }
+.kc-v { font-size: 26px; font-weight: 900; letter-spacing: -.6px; line-height: 1; }
+.kc-l { font-size: 11px; color: var(--text2); margin-top: 5px; font-weight: 600; }
+
+/* ── CAMPUS CARDS ── */
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; min-width: 0; }
+.cc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 13px;
+  box-shadow: var(--sh);
+  cursor: pointer; transition: .22s;
+  position: relative; overflow: hidden;
+}
+.cc::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.cc.sn::before { background: linear-gradient(90deg, var(--blue), var(--green)); }
+.cc.sw::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+.cc.sc::before { background: linear-gradient(90deg, var(--red), #ef4444); }
+.cc:hover { transform: translateY(-4px); box-shadow: var(--sh2); border-color: var(--blue); }
+.cc:hover .cc-arrow { transform: translateX(4px); }
+.cc-h { display: flex; justify-content: space-between; align-items: flex-start; }
+.cc-nm { font-size: 14.5px; font-weight: 800; letter-spacing: -.2px; }
+.cc-lc { font-size: 11px; color: var(--text3); margin-top: 3px; font-weight: 500; }
+.sdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.sdot.g { background: var(--green); box-shadow: 0 0 0 3px rgba(13,126,80,.15); }
+.sdot.y { background: var(--yellow); box-shadow: 0 0 0 3px rgba(180,83,9,.15); }
+.sdot.r { background: var(--red); box-shadow: 0 0 0 3px rgba(185,28,28,.15); animation: pulse 1.5s infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(185,28,28,.15); }
+  50% { box-shadow: 0 0 0 7px rgba(185,28,28,.05); }
+}
+.cc-st { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.cs {
+  background: var(--bg);
+  border-radius: 9px;
+  padding: 9px 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.cs-v { font-size: 17px; font-weight: 900; }
+.cs-l { font-size: 9.5px; color: var(--text3); margin-top: 2px; font-weight: 600; letter-spacing: .02em; }
+.cc-arrow { font-size: 11px; font-weight: 800; color: var(--blue); transition: .2s; display: flex; align-items: center; gap: 3px; }
+.cc-footer { display: flex; justify-content: space-between; align-items: center; }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ── TABLE ── */
+.tw { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th {
+  background: var(--bg);
+  padding: 9px 13px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+}
+tbody tr { border-bottom: 1px solid var(--border); transition: .12s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(26,79,214,.04); }
+tbody td { padding: 9px 13px; vertical-align: middle; }
+.mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+/* ── TOGGLE ── */
+.tgl { position: relative; display: inline-block; width: 36px; height: 20px; cursor: pointer; flex-shrink: 0; }
+.tgl input { opacity: 0; width: 0; height: 0; }
+.tgl-s { position: absolute; inset: 0; background: #cbd5e1; border-radius: 99px; transition: .25s; }
+.tgl-s::before {
+  content: ''; position: absolute;
+  height: 14px; width: 14px; left: 3px; bottom: 3px;
+  background: #fff; border-radius: 50%; transition: .25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+input:checked + .tgl-s { background: var(--blue); }
+input:checked + .tgl-s::before { transform: translateX(16px); }
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12.5px; font-weight: 800;
+  color: var(--blue); cursor: pointer;
+  padding: 7px 14px; border-radius: 9px;
+  border: 1px solid var(--blue-l);
+  background: var(--blue-l); transition: .15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.back-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg);
+  width: fit-content;
+}
+.tab {
+  padding: 9px 17px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none; background: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text2); transition: .15s;
+  white-space: nowrap;
+  letter-spacing: -.1px;
+}
+.tab.active { background: var(--blue); color: #fff; }
+.tab:hover:not(.active) { background: var(--blue-l); color: var(--blue); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* ── FILTER ROW ── */
+.frow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.fsel {
+  padding: 7px 11px; border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px; color: var(--text1);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer; font-weight: 600;
+  outline: none; transition: .15s;
+}
+.fsel:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(139,26,45,.12); }
+.fsearch {
+  padding: 7px 13px; border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px; color: var(--text1);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-width: 200px; outline: none; transition: .15s;
+  font-weight: 500;
+}
+.fsearch:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(139,26,45,.12); }
+.fsearch::placeholder { color: var(--text3); }
+
+/* ── CAMPUS DETAIL ── */
+#cd { display: none; flex-direction: column; gap: 18px; padding: 22px; min-width: 0; overflow-x: hidden; }
+#cd.active { display: flex; }
+.hero-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.hs { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 15px; min-width: 95px; }
+.hs-v { font-size: 20px; font-weight: 900; }
+.hs-l { font-size: 10px; color: var(--text3); margin-top: 3px; font-weight: 600; letter-spacing: .02em; }
+
+/* ── TEMP COLORS ── */
+.tc { color: var(--blue); font-weight: 700; }
+.tn { color: var(--green); font-weight: 700; }
+.tw2 { color: var(--yellow); font-weight: 700; }
+.th { color: var(--red); font-weight: 700; }
+
+/* ── ALERT STRIP ── */
+.astrip {
+  background: linear-gradient(135deg, #fff5f5, #fee2e2);
+  border: 1.5px solid rgba(192,25,46,.25);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 2px 10px rgba(192,25,46,.08);
+}
+.astrip-info {
+  background: linear-gradient(135deg, #f0f3fa, var(--blue-l));
+  border: 1.5px solid rgba(27,47,94,.2);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px;
+}
+
+/* ── PROGRESS ── */
+.prog { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 5px; }
+.pf { height: 100%; border-radius: 99px; transition: width .5s ease; }
+
+/* ── ENERGY BARS ── */
+.ew { display: block; width: 100%; padding: 4px 2px; }
+.eb {
+  flex: 1; border-radius: 5px 5px 0 0; min-width: 16px;
+  transition: .3s; cursor: pointer; position: relative;
+}
+.eb:hover { filter: brightness(1.1); }
+.eb-label { font-size: 9px; text-align: center; margin-top: 4px; color: var(--text3); font-weight: 600; }
+
+/* ── MODAL ── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  z-index: 1000; display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 28px;
+  width: 90%; max-width: 520px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.2);
+  animation: slideUp .22s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-title { font-size: 17px; font-weight: 900; margin-bottom: 20px; letter-spacing: -.3px; }
+.modal-field { margin-bottom: 14px; }
+.modal-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; display: block; }
+.modal-input {
+  width: 100%; padding: 9px 13px;
+  border-radius: 9px; border: 1px solid var(--border);
+  font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif;
+  outline: none; transition: .15s;
+}
+.modal-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(139,26,45,.15); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; }
+
+/* ── NOTIFICATION PANEL ── */
+.notif-panel {
+  position: fixed; top: var(--top); right: 0;
+  width: 320px; background: var(--surface);
+  border-left: 1px solid var(--border);
+  height: calc(100vh - var(--top));
+  z-index: 300; display: none;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0,0,0,.1);
+}
+.notif-panel.open { display: flex; }
+.notif-header { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.notif-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.notif-item { padding: 12px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; transition: .15s; }
+.notif-item:hover { border-color: var(--blue); }
+.notif-item.unread { border-left: 3px solid var(--blue); }
+.notif-item.crit { border-left: 3px solid var(--red); }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: #1A0A10; color: #fff;
+  padding: 12px 18px; border-radius: 10px;
+  font-size: 12.5px; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  animation: toastIn .25s ease;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 320px;
+}
+.toast.success { background: var(--green); }
+.toast.error { background: var(--red); }
+.toast.info { background: var(--blue); }
+@keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ── LOADING OVERLAY ── */
+.loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,.7); z-index: 3000; align-items: center; justify-content: center; }
+.loading.show { display: flex; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 860px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+/* ── CITY CARDS ── */
+.city-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; min-width: 0; }
+.city-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: var(--sh);
+  cursor: pointer; transition: .22s;
+  position: relative; overflow: hidden;
+}
+.city-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: 14px 14px 0 0;
+}
+.city-card.city-normal::before { background: linear-gradient(90deg, var(--blue), var(--green)); }
+.city-card.city-warning::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+.city-card.city-critical::before { background: linear-gradient(90deg, var(--red), #ef4444); }
+.city-card:hover { transform: translateY(-4px); box-shadow: var(--sh2); border-color: var(--blue); }
+.city-card-icon { font-size: 28px; }
+.city-card-name { font-size: 15px; font-weight: 800; letter-spacing: -.2px; }
+.city-card-meta { font-size: 11px; color: var(--text3); font-weight: 500; }
+.city-card-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+.city-stat { background: var(--bg); border-radius: 8px; padding: 7px 5px; text-align: center; border: 1px solid var(--border); }
+.city-stat-v { font-size: 14px; font-weight: 900; }
+.city-stat-l { font-size: 9px; color: var(--text3); margin-top: 1px; font-weight: 600; }
+.city-card-footer { display: flex; justify-content: space-between; align-items: center; }
+
+/* ── CITY DETAIL (campuses of a city) ── */
+#city-detail { display: none; flex-direction: column; gap: 18px; padding: 22px; min-width: 0; overflow-x: hidden; }
+#city-detail.active { display: flex; }
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text3); }
+.breadcrumb .bc-link { color: var(--blue); cursor: pointer; font-weight: 700; }
+.breadcrumb .bc-link:hover { text-decoration: underline; }
+.breadcrumb .bc-sep { color: var(--text3); }
+
+/* ════ PGC BRAND THEME ════ */
+.sb { background: #1A0A10 !important; }
+.nv.active { background: rgba(139,26,45,.28) !important; color:#fff !important; font-weight:700 !important; border-left: 3px solid #C4283E !important; }
+.nv:hover { background: rgba(139,26,45,.16) !important; color:#fff !important; }
+.btn-p { background: linear-gradient(135deg, #8B1A2D, #1B2F5E) !important; }
+.btn-p:hover { background: linear-gradient(135deg, #6B0F1F, #0F1F3D) !important; }
+.tab.active { background: linear-gradient(135deg, #8B1A2D, #1B2F5E) !important; color: #fff !important; }
+.cc:hover { border-color: #8B1A2D !important; }
+.nv.active { border-left: 3px solid #C4283E !important; }
+.lf-input:focus { border-color: #8B1A2D !important; }
+.fsel:focus, .fsearch:focus { border-color: #8B1A2D !important; box-shadow: 0 0 0 3px rgba(139,26,45,.12) !important; }
+.campus-sel:focus { border-color: #8B1A2D !important; box-shadow: 0 0 0 3px rgba(139,26,45,.15) !important; }
+.back-btn { color: #8B1A2D !important; border-color: #F5E6E9 !important; background: #F5E6E9 !important; }
+.back-btn:hover { background: #8B1A2D !important; color: #fff !important; border-color: #8B1A2D !important; }
+.breadcrumb .bc-link { color: #8B1A2D !important; }
+.ib:hover { background: #F5E6E9 !important; border-color: #8B1A2D !important; }
+.cc-arrow { color: #8B1A2D !important; }
+.toast { background: #1A0A10 !important; }
+.toast.success { background: #1B2F5E !important; }
+.toast.info { background: #8B1A2D !important; }
+input:checked + .tgl-s { background: #8B1A2D !important; }
+.modal-input:focus { border-color: #8B1A2D !important; box-shadow: 0 0 0 3px rgba(139,26,45,.15) !important; }
+.notif-item.unread { border-left: 3px solid #8B1A2D !important; }
+</style>
+
+
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-left">
+    <!-- ↓ Paste your campus image src here ↓ -->
+    <img src="dashbaord.JPG" alt="PGC Campus" class="login-bg-img" id="login-bg-img"/>
+    <!-- Dark gradient overlay so text stays readable -->
+    <div class="login-left-overlay"></div>
+    <!-- Content anchored to bottom-left -->
+    <div class="login-left-inner">
+      <div class="login-tagline">Punjab Group<br>of <span>Colleges</span></div>
+      <div class="login-sub">AIRPro Smart Campus Management System<br>Monitoring &amp; Control · All Pakistan Campuses</div>
+      <div class="login-badges">
+        <span class="login-badge">🏫 Multi-Campus</span>
+        <span class="login-badge">❄️ AC Management</span>
+        <span class="login-badge">🔥 Fire Safety</span>
+        <span class="login-badge">⚡ Energy</span>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <div class="login-form-logo">
+        <!-- <div class="lfl-mark"> -->
+         <img src="pgclogo.png" style="width:52px;height:52px;object-fit:contain;" alt="PGC"/>
+        <!-- </div> -->
+        <div class="lfl-text">Punjab College <small>AIRPro Campus System</small></div>
+      </div>
+      <div class="login-heading">Welcome back 👋</div>
+      <div class="login-heading-sub">Sign in to access your campus dashboard</div>
+      <div class="lf-error" id="login-error"><span>🔒</span><span id="login-error-msg">Invalid credentials</span></div>
+      <div class="lf-group">
+        <label class="lf-label" for="inp-user">Username</label>
+        <input class="lf-input" id="inp-user" type="text" placeholder="Enter your username" autocomplete="username"/>
+      </div>
+      <div class="lf-group">
+        <label class="lf-label" for="inp-pass">Password</label>
+        <input class="lf-input" id="inp-pass" type="password" placeholder="Enter your password" autocomplete="current-password"/>
+      </div>
+      <button class="login-btn" onclick="doLogin()" id="login-btn">
+        <span class="login-spinner" id="login-spinner"></span>
+        <span id="login-btn-text">Sign In to Dashboard</span>
+      </button>
+      <div class="login-hint">Username: <strong>admin</strong> &nbsp;|&nbsp; Password: <strong>123456</strong></div>
+      <div class="login-footer">Punjab Group of Colleges · AIRPro v3.0<br>Smart Campus Management System · Pakistan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP SHELL ═══ -->
+<div id="app-shell">
+
+<!-- LOADING -->
+<div class="loading" id="loading"><div class="spinner"></div></div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">
+    <div style="font-size:14px;font-weight:800">Notifications</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-xs bxb" onclick="markAllRead()">Mark all read</button>
+      <button class="btn-xs" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)" onclick="closeNotif()">×</button>
+    </div>
+  </div>
+  <div class="notif-list" id="notif-list"></div>
+</div>
+
+<!-- MODAL: AC Control -->
+<div class="modal-backdrop" id="ac-modal">
+  <div class="modal">
+    <div class="modal-title" id="ac-modal-title">AC Unit Control</div>
+    <div id="ac-modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-o" onclick="closeModal('ac-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveACModal()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit User -->
+<div class="modal-backdrop" id="user-modal">
+  <div class="modal">
+    <div class="modal-title" id="user-modal-title">Add User</div>
+    <div class="modal-field"><label class="modal-label">Full Name</label><input class="modal-input" id="u-name" placeholder="e.g. Ahmad Raza"/></div>
+    <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="u-email" type="email" placeholder="email@punjabcollege.edu.pk"/></div>
+    <div class="modal-field"><label class="modal-label">Role</label>
+      <select class="modal-input" id="u-role"><option>Campus Admin</option><option>Technician</option><option>Viewer</option></select>
+    </div>
+    <div class="modal-field"><label class="modal-label">Campus</label>
+      <select class="modal-input" id="u-campus">
+        <option>All Campuses</option>
+        <option>PC Main — Gulberg</option>
+        <option>PC Township</option>
+        <option>PC Johar Town</option>
+        <option>PC Wapda Town</option>
+        <option>PC Allama Iqbal Town</option>
+        <option>PC DHA</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-o" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn btn-p" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="lmark" style="background:linear-gradient(140deg,#8B1A2D,#1B2F5E);box-shadow:0 4px 14px rgba(0,122,61,.5)"><img src="pgc.png" width="40" height="50" style="object-fit:contain;display:block;"/></div>
+    <div class="ltext" style="color:#fff">Punjab College <small style="color:rgba(255,255,255,.55)">AIRPro — Smart Campus System</small></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding-bottom:8px">
+    <div class="sb-sec">Overview</div>
+    <button class="nv active" onclick="showPage('dashboard',this)"><span class="ico">🏠</span>Dashboard</button>
+    <button class="nv" onclick="showPage('campuses',this)"><span class="ico">🏫</span>All Campuses</button>
+    <div class="sb-sec">Systems</div>
+    <button class="nv" onclick="showPage('ac',this)"><span class="ico">❄️</span>AC Management</button>
+    <button class="nv" onclick="showPage('env',this)"><span class="ico">🌡️</span>Environment</button>
+    <button class="nv" onclick="showPage('fire',this)"><span class="ico">🔥</span>Fire & Safety<span class="nv-b">1</span></button>
+    <div class="sb-sec">Analytics</div>
+    <button class="nv" onclick="showPage('energy',this)"><span class="ico">⚡</span>Energy</button>
+    <button class="nv" onclick="showPage('alerts',this)"><span class="ico">🔔</span>Alerts<span class="nv-b">10</span></button>
+    <button class="nv" onclick="showPage('reports',this)"><span class="ico">📊</span>Reports</button>
+    <div class="sb-sec">Admin</div>
+    <button class="nv" onclick="showPage('users',this)"><span class="ico">👥</span>Users & Roles</button>
+    <button class="nv" onclick="showPage('settings',this)"><span class="ico">⚙️</span>Settings</button>
+  </div>
+  <div class="sb-bot">
+    <div class="av" id="sb-avatar" style="background:linear-gradient(135deg,#8B1A2D,#1B2F5E);box-shadow:0 3px 10px rgba(139,26,45,.4)">AD</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sb-username">Admin</div>
+      <div class="sb-user-role">PC Group · Pakistan</div>
+    </div>
+    <button onclick="doLogout()" title="Logout" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);cursor:pointer;border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:.15s" onmouseover="this.style.background='rgba(139,26,45,.4)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,.1)';this.style.color='rgba(255,255,255,.6)'">⏻</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-t" id="tb-title">Dashboard Overview</div>
+    <select class="campus-sel" id="campus-filter" onchange="filterByCampus()">
+      <option value="">🌐 All Cities</option>
+    </select>
+    <div class="tb-c" id="clock">—</div>
+    <div class="ib" onclick="toggleNotif()" title="Notifications">🔔<span class="nd"></span></div>
+    <div class="av" id="top-avatar" style="cursor:pointer;background:linear-gradient(135deg,#8B1A2D,#1B2F5E)" title="Admin">AD</div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="page active" id="page-dashboard">
+    <div class="ph">
+      <div>
+        <div class="ph-t">Dashboard Overview</div>
+        <div class="ph-s">Punjab College Pakistan · AIRPro Smart Environment System · <span id="dash-city-count">—</span> cities · <span id="dash-campus-count">—</span> campuses</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="exportDashboardCSV()">📥 Export CSV</button>
+        <button class="btn btn-p btn-sm" onclick="refreshDashboard()">🔄 Refresh</button>
+      </div>
+    </div>
+    <div class="kpig" id="dash-kpis"></div>
+    <div>
+      <div style="font-size:11.5px;font-weight:800;color:var(--text2);margin-bottom:11px;display:flex;align-items:center;gap:10px;letter-spacing:.04em;text-transform:uppercase">
+        City Overview
+        <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0;font-size:11px">— click any city to view campuses</span>
+      </div>
+      <div class="city-grid" id="dash-city-grid"></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ct">⚡ Energy — All Pakistan Campuses (kWh Today)</div></div>
+        <div class="cb">
+          <div class="ew" id="ec"></div>
+          <div id="ec-labels" style="display:flex;justify-content:space-around;margin-top:6px;font-size:10px;color:var(--text3);font-weight:600"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">🌡️ Average Temperature — All Pakistan Campuses (°C)</div></div>
+        <div class="cb">
+          <div class="ew" id="tc2"></div>
+          <div id="tc2-labels" style="display:flex;justify-content:space-around;margin-top:6px;font-size:10px;color:var(--text3);font-weight:600"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CAMPUSES LIST ═══ -->
+  <div class="page" id="page-campuses">
+    <div class="ph">
+      <div>
+        <div class="ph-t">🏫 All Campuses — Pakistan</div>
+        <div class="ph-s">Punjab College — All Pakistan locations · Click any card to view room & AC details</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportCampusesCSV()">📥 Export</button>
+      </div>
+    </div>
+    <div class="frow" style="margin-bottom:4px">
+      <input class="fsearch" id="camp-search" placeholder="🔍 Search campus name or area..." oninput="filterCampuses()"/>
+      <select class="fsel" id="camp-status" onchange="filterCampuses()"><option value="">All Status</option><option value="normal">Normal</option><option value="warning">Warning</option><option value="critical">Critical</option></select>
+    </div>
+    <div class="cgrid" id="camps-grid"></div>
+  </div>
+
+
+  <!-- ═══ CITY DETAIL (campuses in a city) ═══ -->
+  <div id="city-detail">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="breadcrumb">
+        <span class="bc-link" onclick="goHome()">🏠 Dashboard</span>
+        <span class="bc-sep">›</span>
+        <span id="city-breadcrumb-name" style="color:var(--text1);font-weight:800">City</span>
+      </div>
+      <button class="back-btn" onclick="goHome()">← Back to Cities</button>
+    </div>
+    <!-- City Hero -->
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <div class="cb">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px">
+          <div>
+            <div style="font-size:22px;font-weight:900;letter-spacing:-.4px" id="city-detail-name">—</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;font-weight:500" id="city-detail-meta">—</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px" id="city-detail-pills"></div>
+          </div>
+          <div class="hero-stats" id="city-detail-stats"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Search/filter -->
+    <div class="frow">
+      <input class="fsearch" id="city-camp-search" placeholder="🔍 Search campus..." oninput="filterCityDetail()"/>
+      <select class="fsel" id="city-camp-status" onchange="filterCityDetail()">
+        <option value="">All Status</option>
+        <option value="normal">Normal</option>
+        <option value="warning">Warning</option>
+        <option value="critical">Critical</option>
+      </select>
+    </div>
+    <!-- Campuses grid for this city -->
+    <div>
+      <div style="font-size:11.5px;font-weight:800;color:var(--text2);margin-bottom:11px;display:flex;align-items:center;gap:10px;letter-spacing:.04em;text-transform:uppercase">
+        Campuses in <span id="city-campus-label" style="color:var(--blue);margin-left:4px">—</span>
+        <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0;font-size:11px">— click any campus card to view AC details</span>
+      </div>
+      <div class="cgrid" id="city-campuses-grid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ CAMPUS DETAIL ═══ -->
+  <div id="cd">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="breadcrumb">
+          <span class="bc-link" onclick="goHome()">🏠 Dashboard</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-link" id="campus-breadcrumb-city" onclick="closeCampus()">City</span>
+          <span class="bc-sep">›</span>
+          <span id="campus-breadcrumb-name" style="color:var(--text1);font-weight:800">Campus</span>
+        </div>
+        <button class="back-btn" onclick="closeCampus()">← Back to Campuses</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="exportTableCSV()">📥 Export CSV</button>
+        <button class="btn btn-p btn-sm" onclick="exportTablePDF()">📄 Export PDF</button>
+        <button class="btn btn-o btn-sm" onclick="refreshCampus()">🔄 Refresh Live</button>
+      </div>
+    </div>
+    <!-- Hero -->
+    <div class="card" id="cd-hero" style="border-left:4px solid var(--blue)">
+      <div class="cb">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px">
+          <div>
+            <div style="font-size:22px;font-weight:900;letter-spacing:-.4px" id="cd-name">—</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;font-weight:500" id="cd-loc">—</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px" id="cd-pills"></div>
+          </div>
+          <div class="hero-stats" id="cd-stats"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Tabs & Filters -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('rooms',this)">🚪 Classrooms</button>
+        <button class="tab" onclick="switchTab('labs',this)">🔬 Labs</button>
+        <button class="tab" onclick="switchTab('halls',this)">🏛️ Halls & Common</button>
+        <button class="tab" onclick="switchTab('summary',this)">📊 AC Summary</button>
+      </div>
+      <div class="frow">
+        <input class="fsearch" id="srch" placeholder="🔍 Search room, AC ID, block..." oninput="doFilter()"/>
+        <select class="fsel" id="ff" onchange="doFilter()"><option value="">All Floors</option><option>Ground Floor</option><option>Floor 1</option><option>Floor 2</option><option>Floor 3</option></select>
+        <select class="fsel" id="fa" onchange="doFilter()"><option value="">All AC Status</option><option value="ON">ON</option><option value="OFF">OFF</option><option value="FAULT">FAULT</option></select>
+        <select class="fsel" id="fb" onchange="doFilter()"><option value="">All Blocks</option></select>
+      </div>
+    </div>
+    <!-- Panes -->
+    <div class="tab-pane active" id="tab-rooms">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">🚪 Classrooms — AC Unit Placement & Status</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="pill p-b" id="rm-cnt">— rooms</span>
+            <button class="btn btn-xs bxb" onclick="exportTabPDF('rooms')">📄 PDF</button>
+          </div>
+        </div>
+        <div class="tw"><table><thead><tr><th>Room ID</th><th>Room Name</th><th>Block</th><th>Floor</th><th>Capacity</th><th>AC Unit ID</th><th>Status</th><th>Mode</th><th>Set °C</th><th>Room °C</th><th>Energy</th><th>Control</th></tr></thead><tbody id="tb-rooms"></tbody></table></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="tab-labs">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">🔬 Labs — AC Unit Placement & Status</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="pill p-p" id="lab-cnt">— labs</span>
+            <button class="btn btn-xs bxb" onclick="exportTabPDF('labs')">📄 PDF</button>
+          </div>
+        </div>
+        <div class="tw"><table><thead><tr><th>Lab ID</th><th>Lab Name</th><th>Block</th><th>Floor</th><th>Capacity</th><th>AC Unit ID</th><th>Status</th><th>Mode</th><th>Set °C</th><th>Room °C</th><th>Energy</th><th>Control</th></tr></thead><tbody id="tb-labs"></tbody></table></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="tab-halls">
+      <div class="card">
+        <div class="ch">
+          <div class="ct">🏛️ Halls & Common Areas — AC Unit Placement & Status</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="pill p-o" id="hall-cnt">— halls</span>
+            <button class="btn btn-xs bxb" onclick="exportTabPDF('halls')">📄 PDF</button>
+          </div>
+        </div>
+        <div class="tw"><table><thead><tr><th>Hall ID</th><th>Hall Name</th><th>Block</th><th>Floor</th><th>Capacity</th><th>AC Unit ID</th><th>Status</th><th>Mode</th><th>Set °C</th><th>Room °C</th><th>Energy</th></tr></thead><tbody id="tb-halls"></tbody></table></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="tab-summary">
+      <div class="g3">
+        <div class="card"><div class="ch"><div class="ct">AC Status Breakdown</div></div><div class="cb" id="sum-status"></div></div>
+        <div class="card"><div class="ch"><div class="ct">Energy by Floor</div></div><div class="cb" id="sum-floor"></div></div>
+        <div class="card"><div class="ch"><div class="ct">AC Types Installed</div></div><div class="cb" id="sum-types"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AC MANAGEMENT ═══ -->
+  <div class="page" id="page-ac">
+    <div class="ph">
+      <div>
+        <div class="ph-t">❄️ AC Management — AIRPro</div>
+        <div class="ph-s">All units across Pakistan campuses</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportACCSV()">📥 Export CSV</button>
+        <button class="btn btn-o btn-sm" onclick="exportACPDF()">📄 Export PDF</button>
+      </div>
+    </div>
+    <div class="astrip-info">
+      <span style="font-size:22px">🤖</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;color:var(--blue)">AIRPro AI: units across Pakistan campuses can switch to Eco-mode — est. 14% energy saving</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">Based on current occupancy and outdoor temperature readings</div>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="applyEcoMode()">Apply Eco</button>
+    </div>
+    <div class="frow">
+      <input class="fsearch" id="ac-search" placeholder="🔍 Search AC ID, room, campus..." oninput="filterACTable()"/>
+      <select class="fsel" id="ac-campus-f" onchange="filterACTable()"><option value="">All Campuses</option></select>
+      <select class="fsel" id="ac-status-f" onchange="filterACTable()"><option value="">All Status</option><option>ON</option><option>OFF</option><option>FAULT</option></select>
+
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">All AC Units</div><span class="pill p-b" id="ac-count">— units</span></div>
+      <div class="tw"><table><thead><tr><th>AC ID</th><th>Campus</th><th>Block</th><th>Room</th><th>Floor</th><th>Status</th><th>Mode</th><th>Set °C</th><th>Room °C</th><th>kWh</th><th>Action</th></tr></thead><tbody id="ac-tb"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ═══ ENVIRONMENT ═══ -->
+  <div class="page" id="page-env">
+    <div class="ph">
+      <div>
+        <div class="ph-t">🌡️ Environment — IRIS Ultra</div>
+        <div class="ph-s">Live sensor readings — All Pakistan campuses</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="pill p-g" style="font-size:11.5px;padding:6px 13px">● Live</span>
+        <button class="btn btn-o btn-sm" onclick="exportEnvPDF()">📄 Export PDF</button>
+      </div>
+    </div>
+    <div class="kpig">
+      <div class="kc kb"><div class="kc-i">🌡️</div><div class="kc-v">24.2°C</div><div class="kc-l">Avg Temperature</div></div>
+      <div class="kc kp"><div class="kc-i">💧</div><div class="kc-v">63%</div><div class="kc-l">Avg Humidity</div></div>
+      <div class="kc kg"><div class="kc-i">🌬️</div><div class="kc-v">48 AQI</div><div class="kc-l">Air Quality Index</div></div>
+      <div class="kc ky"><div class="kc-i">☁️</div><div class="kc-v">840 ppm</div><div class="kc-l">CO₂ Average</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Zone Readings — All Pakistan Campuses</div>
+        <button class="btn btn-xs bxb" onclick="exportEnvPDF()">📄 PDF</button>
+      </div>
+      <div class="tw"><table id="env-table"><thead><tr><th>Zone</th><th>Campus</th><th>City</th><th>Temp</th><th>Humidity</th><th>AQI</th><th>CO₂</th><th>Occupancy</th><th>Status</th></tr></thead><tbody id="env-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ═══ FIRE & SAFETY ═══ -->
+  <div class="page" id="page-fire">
+    <div class="ph">
+      <div><div class="ph-t">🔥 Fire & Safety — FireSense</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportFirePDF()">📄 Export PDF</button>
+        <button class="btn btn-r btn-sm" onclick="triggerDrill()">🚨 Trigger Drill</button>
+      </div>
+    </div>
+    <div class="astrip">
+      <span style="font-size:26px">🚨</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:800;color:var(--red)">ACTIVE — PC Rewaz Garden, Lahore · Science Block · Floor 2 · Room SF-201 | CO Alert — PC Malir, Karachi</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">Smoke sensor triggered 11:47. Partial evacuation in progress.</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-r btn-sm" onclick="showToast('Emergency broadcast sent to all Pakistan campuses!','info')">Broadcast</button>
+        <button class="btn btn-o btn-sm" onclick="resolveAlert()">Resolve</button>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Sensor Status</div><span class="pill p-r">1 Triggered</span></div>
+        <div class="tw"><table><thead><tr><th>Sensor ID</th><th>Type</th><th>Campus</th><th>City</th><th>Location</th><th>Reading</th><th>Status</th></tr></thead><tbody>
+          <tr><td class="mono">SM-F201</td><td>💨 Smoke</td><td>PC Rewaz Garden</td><td>Lahore</td><td>SF-201 · Science 2F</td><td style="color:var(--red);font-weight:700">HIGH</td><td><span class="pill p-r">TRIGGERED</span></td></tr>
+          <tr><td class="mono">FS-M001</td><td>🔥 Fire</td><td>PC Rewaz Garden</td><td>Lahore</td><td>Admin Block · GF</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">CO-T010</td><td>☁️ CO</td><td>PC Township</td><td>Lahore</td><td>Chem Lab · 1F</td><td style="color:var(--yellow);font-weight:700">14ppm</td><td><span class="pill p-y">Warning</span></td></tr>
+          <tr><td class="mono">FS-AZ01</td><td>🔥 Fire</td><td>PC Azam Garden</td><td>Lahore</td><td>Block B · 1F</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">SM-IB01</td><td>💨 Smoke</td><td>PC Aabpara</td><td>Islamabad</td><td>CS Block · GF</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">CO-G101</td><td>☁️ CO</td><td>PC G-10</td><td>Islamabad</td><td>Assembly Hall · GF</td><td style="color:var(--yellow);font-weight:700">18ppm</td><td><span class="pill p-y">Warning</span></td></tr>
+          <tr><td class="mono">FS-RS01</td><td>🔥 Fire</td><td>PC Saddar</td><td>Rawalpindi</td><td>Main Block · GF</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">SM-PR01</td><td>💨 Smoke</td><td>PC Peshawar Road</td><td>Rawalpindi</td><td>Chem Lab · 1F</td><td style="color:var(--yellow);font-weight:700">Elevated</td><td><span class="pill p-y">Warning</span></td></tr>
+          <tr><td class="mono">FS-KG01</td><td>🔥 Fire</td><td>PC Gulshan</td><td>Karachi</td><td>Main Hall · GF</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">CO-KM01</td><td>☁️ CO</td><td>PC Malir</td><td>Karachi</td><td>Physics Lab · 1F</td><td style="color:var(--red);font-weight:700">28ppm</td><td><span class="pill p-r">ALERT</span></td></tr>
+          <tr><td class="mono">FS-FB01</td><td>🔥 Fire</td><td>PC Batala Colony</td><td>Faisalabad</td><td>Admin Block · GF</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+          <tr><td class="mono">SM-HY01</td><td>💨 Smoke</td><td>PC Autobahn HYD</td><td>Hyderabad</td><td>Science Block · 1F</td><td>Normal</td><td><span class="pill p-g">OK</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">⏱️ Response Timeline</div></div>
+        <div class="cb" style="font-size:12px;display:flex;flex-direction:column;gap:13px">
+          <div style="display:flex;gap:10px"><span style="font-size:15px">🔴</span><div><div style="font-weight:700">Smoke sensor SM-F201 triggered</div><div style="color:var(--text3);font-size:10.5px">11:47:03 · SF-201</div></div></div>
+          <div style="display:flex;gap:10px"><span style="font-size:15px">🟡</span><div><div style="font-weight:700">Admin alert sent via SMS & email</div><div style="color:var(--text3);font-size:10.5px">11:47:06 · Automated</div></div></div>
+          <div style="display:flex;gap:10px"><span style="font-size:15px">🔵</span><div><div style="font-weight:700">PA system activated — partial evacuation</div><div style="color:var(--text3);font-size:10.5px">11:47:30</div></div></div>
+          <div style="display:flex;gap:10px"><span style="font-size:15px">⚪</span><div><div style="font-weight:700;color:var(--text3)">Awaiting fire dept. — ETA 8 min</div><div style="color:var(--text3);font-size:10.5px">11:48:00</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ENERGY ═══ -->
+  <div class="page" id="page-energy">
+    <div class="ph">
+      <div><div class="ph-t">⚡ Energy Analytics</div><div class="ph-s">All Pakistan campuses — real-time consumption</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportEnergyCSV()">📥 CSV</button>
+        <button class="btn btn-o btn-sm" onclick="exportEnergyPDF()">📄 PDF</button>
+      </div>
+    </div>
+    <div class="kpig">
+      <div class="kc ky"><div class="kc-i">⚡</div><div class="kc-v" id="e-today">—</div><div class="kc-l">kWh Today</div></div>
+      <div class="kc kb"><div class="kc-i">📆</div><div class="kc-v">288</div><div class="kc-l">kWh This Week</div></div>
+      <div class="kc kp"><div class="kc-i">🗓️</div><div class="kc-v">1,140</div><div class="kc-l">kWh This Month</div></div>
+      
+      <div class="kc kt"><div class="kc-i">🌱</div><div class="kc-v">5.4t</div><div class="kc-l">CO₂ Saved MTD</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Campus-wise Energy Consumption</div>
+        <button class="btn btn-xs bxb" onclick="exportEnergyPDF()">📄 PDF</button>
+      </div>
+      <div class="cb" id="energy-bars"></div>
+    </div>
+  </div>
+
+  <!-- ═══ ALERTS ═══ -->
+  <div class="page" id="page-alerts">
+    <div class="ph">
+      <div><div class="ph-t">🔔 Alerts & Notifications</div><div class="ph-s" id="alert-summary-text">5 active · 1 critical</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportAlertsPDF()">📄 Export PDF</button>
+        <button class="btn btn-o btn-sm" onclick="markAllAlertsResolved()">✅ Mark All Resolved</button>
+      </div>
+    </div>
+    <div class="frow">
+      <input class="fsearch" id="alert-search" placeholder="🔍 Search alerts..." oninput="filterAlerts()"/>
+      <select class="fsel" id="alert-severity" onchange="filterAlerts()"><option value="">All Severity</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+      <select class="fsel" id="alert-status-f" onchange="filterAlerts()"><option value="">All Status</option><option>Open</option><option>Resolved</option></select>
+    </div>
+    <div class="card">
+      <div class="tw"><table><thead><tr><th>ID</th><th>Alert</th><th>System</th><th>Campus</th><th>Location</th><th>Time</th><th>Severity</th><th>Status</th><th>Actions</th></tr></thead><tbody id="alerts-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ═══ REPORTS ═══ -->
+  <div class="page" id="page-reports">
+    <div class="ph"><div><div class="ph-t">📊 Reports</div><div class="ph-s">Generate and download campus reports</div></div></div>
+    <div class="g3">
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">⚡</div>
+          <div style="font-weight:800;font-size:13.5px">Energy Usage</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Per campus & room breakdown</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportEnergyPDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="exportEnergyCSV()">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">🌡️</div>
+          <div style="font-weight:800;font-size:13.5px">Temperature Logs</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Room-by-room history</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportEnvPDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="showToast('Temperature CSV exported','success')">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">🔔</div>
+          <div style="font-weight:800;font-size:13.5px">Alert History</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">All alerts & resolutions</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportAlertsPDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="showToast('Alerts CSV exported','success')">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">❄️</div>
+          <div style="font-weight:800;font-size:13.5px">AC Performance</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Unit-level performance report</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportACPDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="exportACCSV()">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">🔥</div>
+          <div style="font-weight:800;font-size:13.5px">Fire & Safety</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Sensor status & incident log</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportFirePDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="showToast('Fire report CSV exported','success')">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer">
+        <div class="cb" style="text-align:center;padding:28px 16px">
+          <div style="font-size:34px;margin-bottom:10px">📋</div>
+          <div style="font-weight:800;font-size:13.5px">Full Campus Report</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Comprehensive campus summary</div>
+          <div style="display:flex;gap:6px;justify-content:center;margin-top:14px">
+            <button class="btn btn-p btn-sm" onclick="exportFullPDF()">📄 PDF</button>
+            <button class="btn btn-o btn-sm" onclick="exportDashboardCSV()">📊 CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ USERS ═══ -->
+  <div class="page" id="page-users">
+    <div class="ph">
+      <div><div class="ph-t">👥 Users & Roles</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-o btn-sm" onclick="exportUsersPDF()">📄 Export</button>
+        <button class="btn btn-p btn-sm" onclick="openUserModal()">+ Invite User</button>
+      </div>
+    </div>
+    <div class="frow">
+      <input class="fsearch" id="user-search" placeholder="🔍 Search users..." oninput="filterUsers()"/>
+      <select class="fsel" id="user-role-f" onchange="filterUsers()"><option value="">All Roles</option><option>Super Admin</option><option>Campus Admin</option><option>Technician</option><option>Viewer</option></select>
+    </div>
+    <div class="card">
+      <div class="tw"><table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Campus</th><th>Status</th><th>Last Active</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS ═══ -->
+  <div class="page" id="page-settings">
+    <div class="ph"><div><div class="ph-t">⚙️ Settings</div></div><button class="btn btn-p btn-sm" onclick="saveSettings()">💾 Save All Settings</button></div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ct">Alert Thresholds</div></div>
+        <div class="cb" style="display:flex;flex-direction:column;gap:15px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-weight:700;font-size:13px">Max Temperature</div><div style="font-size:10.5px;color:var(--text3)">Alert above this value</div></div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" id="s-maxtemp" value="30" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;width:72px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;outline:none"/><span style="font-size:12px;color:var(--text3);font-weight:600">°C</span></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-weight:700;font-size:13px">CO₂ Threshold</div><div style="font-size:10.5px;color:var(--text3)">Alert above this value</div></div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" id="s-co2" value="1000" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;width:80px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;outline:none"/><span style="font-size:12px;color:var(--text3);font-weight:600">ppm</span></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-weight:700;font-size:13px">Humidity Threshold</div><div style="font-size:10.5px;color:var(--text3)">Alert above this value</div></div>
+            <div style="display:flex;align-items:center;gap:6px"><input type="number" id="s-hum" value="75" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:13px;width:72px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;outline:none"/><span style="font-size:12px;color:var(--text3);font-weight:600">%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Notifications</div></div>
+        <div class="cb" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">Email Alerts</div><div style="font-size:10.5px;color:var(--text3)">Send via admin email</div></div><label class="tgl"><input type="checkbox" checked/><span class="tgl-s"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">SMS Critical Alerts</div><div style="font-size:10.5px;color:var(--text3)">For critical events only</div></div><label class="tgl"><input type="checkbox" checked/><span class="tgl-s"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">AI Predictions</div><div style="font-size:10.5px;color:var(--text3)">AIRPro recommendations</div></div><label class="tgl"><input type="checkbox" checked/><span class="tgl-s"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">Auto Eco-Mode</div><div style="font-size:10.5px;color:var(--text3)">Optimize AC automatically</div></div><label class="tgl"><input type="checkbox"/><span class="tgl-s"></span></label></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">System</div></div>
+        <div class="cb" style="display:flex;flex-direction:column;gap:15px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-weight:700;font-size:13px">Refresh Interval</div><div style="font-size:10.5px;color:var(--text3)">Live data update frequency</div></div>
+            <select style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;outline:none"><option>30 seconds</option><option>1 minute</option><option>5 minutes</option></select>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><div style="font-weight:700;font-size:13px">Temperature Unit</div></div>
+            <select style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;outline:none"><option>Celsius (°C)</option><option>Fahrenheit (°F)</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Security</div></div>
+        <div class="cb" style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">Two-Factor Auth</div><div style="font-size:10.5px;color:var(--text3)">Require 2FA for all admins</div></div><label class="tgl"><input type="checkbox" checked/><span class="tgl-s"></span></label></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:13px">Audit Logging</div><div style="font-size:10.5px;color:var(--text3)">Log all admin actions</div></div><label class="tgl"><input type="checkbox" checked/><span class="tgl-s"></span></label></div>
+          <button class="btn btn-o btn-sm" style="width:fit-content" onclick="showToast('Session cleared for all users','info')">🔒 Force Re-login All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════
+// LAHORE CAMPUSES DATA — Only Lahore locations
+// ══════════════════════════════════════════
+const AC_TYPES = ['Split Unit','Split Unit','Central AC'];
+const AC_MODES = ['Cool','Cool','Fan','Cool','Dry'];
+const AC_POS = ['Front Wall — Left','Front Wall — Right','Ceiling Center','Rear Wall — Center','Side Wall — Left','Side Wall — Right','Ceiling — Near Window','Above Whiteboard','Rear Ceiling Corner','Ceiling — Near Door'];
+
+function sr(s){let x=Math.sin(s+1)*10000;return x-Math.floor(x);}
+function ri(a,b,s){return a+Math.floor(sr(s||Math.random()*9999)*(b-a+1));}
+
+function makeACs(pfx,count,seed,roomSeed){
+  const acs=[];
+  for(let i=0;i<count;i++){
+    const s=seed*10+i;const r=sr(s+5);
+    const status=r<0.06?'FAULT':r<0.22?'OFF':'ON';
+    acs.push({
+      id:`AC-${pfx}${String(roomSeed).padStart(3,'0')}${i>0?String.fromCharCode(65+i):''}`,
+      status,
+      mode:status==='ON'?AC_MODES[Math.floor(sr(s+3)*AC_MODES.length)]:'—',
+      setTemp:status==='ON'?18+Math.round(sr(s+4)*8):'—',
+      energy:status==='ON'?+(sr(s+6)*2.5+0.4).toFixed(2):0
+    });
+  }
+  return acs;
+}
+function makeRooms(pfx,blocks,perBlock,floors){
+  const rows=[];
+  blocks.forEach((blk,bi)=>{
+    for(let i=1;i<=perBlock;i++){
+      const seed=pfx.charCodeAt(0)*1000+bi*100+i;
+      const fl=floors[i%floors.length];
+      const fn=fl==='Ground Floor'?0:parseInt(fl.replace('Floor ',''));
+      const rt=18+Math.round(sr(seed+20)*14);
+      const acCnt=i<=2?2:1;
+      rows.push({id:`${pfx}-R${String(bi*perBlock+i).padStart(3,'0')}`,name:`${blk} · Room ${fn}${String(i).padStart(2,'0')}`,block:blk,floor:fl,cap:ri(35,60,seed+30),roomTemp:rt,acs:makeACs(pfx+'R',acCnt,seed,bi*perBlock+i)});
+    }
+  });
+  return rows;
+}
+function makeLabs(pfx,blocks,perBlock,floors){
+  const types=['Computer Lab','Physics Lab','Chemistry Lab','Biology Lab','Electronics Lab','Language Lab','Maths Lab'];
+  const rows=[];
+  blocks.forEach((blk,bi)=>{
+    for(let i=1;i<=perBlock;i++){
+      const seed=pfx.charCodeAt(0)*2000+bi*100+i+500;
+      const fl=floors[i%floors.length];
+      const rt=19+Math.round(sr(seed+20)*15);
+      rows.push({id:`${pfx}-L${String(bi*perBlock+i).padStart(2,'0')}`,name:`${types[Math.floor(sr(seed)*types.length)]} ${i}`,block:blk,floor:fl,cap:ri(28,45,seed+30),roomTemp:rt,acs:makeACs(pfx+'L',2,seed,bi*perBlock+i)});
+    }
+  });
+  return rows;
+}
+function makeHalls(pfx,blocks,per){
+  const types=['Auditorium','Main Assembly Hall','Multipurpose Hall','Common Room','Prayer Hall'];
+  const rows=[];
+  blocks.forEach((blk,bi)=>{
+    for(let i=1;i<=per;i++){
+      const seed=pfx.charCodeAt(0)*3000+bi*100+i+900;
+      const rt=19+Math.round(sr(seed+20)*12);
+      rows.push({id:`${pfx}-H${String(bi*per+i).padStart(2,'0')}`,name:types[Math.floor(sr(seed)*types.length)],block:blk,floor:'Ground Floor',cap:ri(150,600,seed+30),roomTemp:rt,acs:makeACs(pfx+'H',4,seed,bi*per+i)});
+    }
+  });
+  return rows;
+}
+
+// ─── ALL PAKISTAN CAMPUSES ───
+const CAMPUSES = [
+  // ── LAHORE ──
+
+  {id:0,  name:'PC Muslim Town Campus — Lahore',            short:'PC Muslim Town',        area:'Muslim Town',       city:'Lahore',     status:'normal',   temp:24, acActive:76, acFault:1, occ:1900, energy:9.1,  rooms:makeRooms('MT', ['Main Block','Commerce Block'],7,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('MT', ['Computer Block'],4,['Ground Floor','Floor 1']),         halls:makeHalls('MT', ['Main Block'],2)},
+  {id:1,  name:'PC Main Campus — Rewaz Garden, Lahore',   short:'PC Rewaz Garden',       area:'Rewaz Garden',      city:'Lahore',     status:'normal',   temp:22, acActive:98, acFault:2, occ:2800, energy:12.4, rooms:makeRooms('M',  ['Block A','Block B','Science Block'],8,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('M',  ['Science Block','CS Block'],5,['Ground Floor','Floor 1']), halls:makeHalls('M',  ['Main Block'],2)},
+  {id:2,  name:'PC Gulberg Campus — Lahore',                short:'PC Gulberg',            area:'Gulberg III',       city:'Lahore',     status:'normal',   temp:23, acActive:82, acFault:1, occ:2200, energy:10.2, rooms:makeRooms('GL', ['Block A','Humanities Block'],7,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('GL', ['Science Block'],4,['Ground Floor','Floor 1']),           halls:makeHalls('GL', ['Main Block'],2)},
+  {id:3,  name:'PC Ferozepur Road Campus — Lahore',         short:'PC Ferozepur Road',     area:'Ferozepur Road',    city:'Lahore',     status:'warning',  temp:27, acActive:76, acFault:3, occ:1900, energy:9.8,  rooms:makeRooms('T',  ['Main Block','Commerce Block'],7,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('T',  ['Computer Block'],4,['Ground Floor','Floor 1']),         halls:makeHalls('T',  ['Main Block'],2)},
+  {id:4,  name:'PC Township Campus — Lahore',               short:'PC Township',           area:'Township',          city:'Lahore',     status:'normal',   temp:24, acActive:64, acFault:1, occ:1600, energy:7.6,  rooms:makeRooms('J',  ['Block A','Science Block'],7,['Ground Floor','Floor 1','Floor 2']),   labs:makeLabs('J',  ['CS Block'],4,['Ground Floor','Floor 1']),                halls:makeHalls('J',  ['Main Block'],2)},
+  {id:5,  name:'PC Mughalpura Campus — Lahore',             short:'PC Mughalpura',         area:'Mughalpura',        city:'Lahore',     status:'normal',   temp:25, acActive:52, acFault:0, occ:1400, energy:6.8,  rooms:makeRooms('MU', ['Main Block','Block B'],6,['Ground Floor','Floor 1']),                labs:makeLabs('MU', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('MU', ['Main Block'],1)},
+  {id:6,  name:'PC DHA / Barki Road Campus — Lahore',       short:'PC DHA — Lahore',       area:'DHA / Barki Road',  city:'Lahore',     status:'normal',   temp:22, acActive:48, acFault:0, occ:980,  energy:5.1,  rooms:makeRooms('A',  ['Main Block'],6,['Ground Floor','Floor 1']),                       labs:makeLabs('A',  ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('A',  ['Main Block'],1)},
+  {id:7,  name:'PC Johar Town Campus — Lahore',             short:'PC Johar Town',         area:'Johar Town',        city:'Lahore',     status:'normal',   temp:23, acActive:42, acFault:0, occ:760,  energy:4.3,  rooms:makeRooms('D',  ['Main Block'],5,['Ground Floor','Floor 1']),                       labs:makeLabs('D',  ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('D',  ['Main Block'],1)},
+  {id:8,  name:'PC Azam Garden Campus — Lahore',            short:'PC Azam Garden',        area:'Azam Garden',       city:'Lahore',     status:'critical', temp:31, acActive:38, acFault:4, occ:640,  energy:3.8,  rooms:makeRooms('Mo', ['Main Block','Block B'],5,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('Mo', ['Science Block'],3,['Ground Floor','Floor 1']),          halls:makeHalls('Mo', ['Main Block'],1)},
+  {id:9,  name:'PC Shahdara Campus — Lahore',               short:'PC Shahdara',           area:'Shahdara',          city:'Lahore',     status:'normal',   temp:23, acActive:34, acFault:0, occ:520,  energy:2.9,  rooms:makeRooms('Ga', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('Ga', ['CS Block'],2,['Ground Floor']),                          halls:makeHalls('Ga', ['Main Block'],1)},
+  {id:10, name:'PC Raiwind Campus — Lahore',                short:'PC Raiwind',            area:'Raiwind',           city:'Lahore',     status:'normal',   temp:24, acActive:30, acFault:0, occ:440,  energy:2.4,  rooms:makeRooms('RV', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('RV', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('RV', ['Main Block'],1)},
+  {id:11, name:'PC Kahna Nau Campus — Lahore',              short:'PC Kahna Nau',          area:'Kahna Nau',         city:'Lahore',     status:'normal',   temp:24, acActive:28, acFault:0, occ:400,  energy:2.2,  rooms:makeRooms('KN', ['Main Block'],3,['Ground Floor','Floor 1']),                       labs:makeLabs('KN', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('KN', ['Main Block'],1)},
+  {id:12, name:'PC Shalamar Campus — Lahore',               short:'PC Shalamar',           area:'Shalimar Link Road',city:'Lahore',     status:'normal',   temp:24, acActive:26, acFault:0, occ:380,  energy:2.0,  rooms:makeRooms('SL', ['Main Block'],3,['Ground Floor','Floor 1']),                       labs:makeLabs('SL', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('SL', ['Main Block'],1)},
+  {id:13, name:'PC Allama Iqbal Town — Lahore',             short:'PC Allama Iqbal Town',  area:'Allama Iqbal Town', city:'Lahore',     status:'normal',   temp:25, acActive:48, acFault:0, occ:980,  energy:5.1,  rooms:makeRooms('AI', ['Main Block'],6,['Ground Floor','Floor 1']),                       labs:makeLabs('AI', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('AI', ['Main Block'],1)},
+
+  // ── ISLAMABAD ──
+  {id:14, name:'PC Aabpara Campus — Islamabad',           short:'PC Aabpara',            area:'G-6/1, Aabpara',    city:'Islamabad',  status:'normal',   temp:21, acActive:88, acFault:1, occ:2400, energy:11.2, rooms:makeRooms('IB', ['Block A','Science Block'],8,['Ground Floor','Floor 1','Floor 2']),  labs:makeLabs('IB', ['CS Block','Science Block'],5,['Ground Floor','Floor 1']), halls:makeHalls('IB', ['Main Block'],2)},
+  {id:15, name:'PC Blue Area Campus — Islamabad',          short:'PC Blue Area',          area:'Blue Area',         city:'Islamabad',  status:'normal',   temp:20, acActive:62, acFault:0, occ:1500, energy:7.1,  rooms:makeRooms('IF', ['Main Block','Block B'],6,['Ground Floor','Floor 1','Floor 2']),  labs:makeLabs('IF', ['CS Block'],4,['Ground Floor','Floor 1']),                halls:makeHalls('IF', ['Main Block'],2)},
+  {id:16, name:'PC G-10 Campus — Islamabad',               short:'PC G-10',               area:'G-10 Markaz',       city:'Islamabad',  status:'warning',  temp:26, acActive:44, acFault:2, occ:1100, energy:5.6,  rooms:makeRooms('IG', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('IG', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('IG', ['Main Block'],1)},
+  {id:17, name:'PC Bhara Kahu Campus — Islamabad',         short:'PC Bhara Kahu',         area:'Bhara Kahu',        city:'Islamabad',  status:'normal',   temp:22, acActive:38, acFault:0, occ:870,  energy:4.5,  rooms:makeRooms('II', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('II', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('II', ['Main Block'],1)},
+  {id:18, name:'PC H-11 Campus — Islamabad',               short:'PC H-11',               area:'H-11 (Near NUST)',  city:'Islamabad',  status:'normal',   temp:21, acActive:50, acFault:0, occ:1200, energy:6.0,  rooms:makeRooms('IH', ['Main Block','Block B'],6,['Ground Floor','Floor 1']),               labs:makeLabs('IH', ['CS Block'],3,['Ground Floor','Floor 1']),                halls:makeHalls('IH', ['Main Block'],1)},
+  {id:19, name:'PC Sihala Campus — Islamabad',             short:'PC Sihala',             area:'Sihala, Kahuta Road',city:'Islamabad', status:'normal',   temp:22, acActive:32, acFault:0, occ:620,  energy:3.2,  rooms:makeRooms('IS', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('IS', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('IS', ['Main Block'],1)},
+
+  // ── RAWALPINDI ──
+  {id:20, name:'PC Saddar Campus — Rawalpindi',            short:'PC Saddar',             area:'Saddar',            city:'Rawalpindi', status:'normal',   temp:24, acActive:72, acFault:1, occ:2100, energy:10.3, rooms:makeRooms('RS', ['Block A','Block B'],7,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('RS', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']),halls:makeHalls('RS', ['Main Block'],2)},
+  {id:21, name:'PC Satellite Town Campus — Rawalpindi',    short:'PC Satellite Town RWP', area:'Satellite Town',    city:'Rawalpindi', status:'normal',   temp:25, acActive:68, acFault:0, occ:1800, energy:8.6,  rooms:makeRooms('RW', ['Main Block','Block B'],7,['Ground Floor','Floor 1']),               labs:makeLabs('RW', ['Science Block'],4,['Ground Floor','Floor 1']),           halls:makeHalls('RW', ['Main Block'],2)},
+  {id:22, name:'PC Gulraiz Campus — Rawalpindi',           short:'PC Gulraiz',            area:'Gulraiz Phase 2',   city:'Rawalpindi', status:'normal',   temp:24, acActive:55, acFault:0, occ:1400, energy:6.8,  rooms:makeRooms('RG', ['Main Block','Block B'],6,['Ground Floor','Floor 1']),               labs:makeLabs('RG', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('RG', ['Main Block'],1)},
+  {id:23, name:'PC Peshawar Road Campus — Rawalpindi',     short:'PC Peshawar Road',      area:'Peshawar Road',     city:'Rawalpindi', status:'warning',  temp:28, acActive:40, acFault:2, occ:980,  energy:5.0,  rooms:makeRooms('RC', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('RC', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('RC', ['Main Block'],1)},
+  {id:24, name:'PC Quaid Campus — Rawalpindi',             short:'PC Quaid RWP',          area:'Saidpur Road',      city:'Rawalpindi', status:'normal',   temp:25, acActive:36, acFault:0, occ:820,  energy:4.1,  rooms:makeRooms('RQ', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('RQ', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('RQ', ['Main Block'],1)},
+  {id:25, name:'PC Dhamyal Campus — Rawalpindi',           short:'PC Dhamyal',            area:'Dhamyal Road',      city:'Rawalpindi', status:'normal',   temp:25, acActive:30, acFault:0, occ:680,  energy:3.4,  rooms:makeRooms('RD', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('RD', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('RD', ['Main Block'],1)},
+  {id:26, name:'PC Adyala Road Campus — Rawalpindi',       short:'PC Adyala Road',        area:'Adyala Road',       city:'Rawalpindi', status:'normal',   temp:26, acActive:26, acFault:0, occ:560,  energy:2.9,  rooms:makeRooms('RA', ['Main Block'],3,['Ground Floor','Floor 1']),                       labs:makeLabs('RA', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('RA', ['Main Block'],1)},
+  {id:27, name:'PC Bahria Town Campus — Rawalpindi',       short:'PC Bahria Town RWP',    area:'Bahria Phase 7/8',  city:'Rawalpindi', status:'normal',   temp:23, acActive:44, acFault:0, occ:950,  energy:5.2,  rooms:makeRooms('RB', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('RB', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('RB', ['Main Block'],1)},
+
+  // ── KARACHI ──
+  {id:28, name:'PC Gulshan-e-Iqbal Campus — Karachi',      short:'PC Gulshan',            area:'Gulshan-e-Iqbal',   city:'Karachi',    status:'normal',   temp:29, acActive:94, acFault:1, occ:3200, energy:15.8, rooms:makeRooms('KG', ['Block A','Block B','Science Block'],9,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('KG', ['CS Block','Science Block'],6,['Ground Floor','Floor 1']), halls:makeHalls('KG', ['Main Block'],3)},
+  {id:29, name:'PC North Nazimabad Campus — Karachi',       short:'PC North Nazimabad',    area:'North Nazimabad',   city:'Karachi',    status:'normal',   temp:28, acActive:78, acFault:0, occ:2200, energy:11.4, rooms:makeRooms('KN', ['Block A','Commerce Block'],7,['Ground Floor','Floor 1','Floor 2']),  labs:makeLabs('KN', ['CS Block'],5,['Ground Floor','Floor 1']),                halls:makeHalls('KN', ['Main Block'],2)},
+  {id:30, name:'PC Malir Campus — Karachi',                 short:'PC Malir',              area:'Malir',             city:'Karachi',    status:'warning',  temp:30, acActive:66, acFault:3, occ:1700, energy:8.9,  rooms:makeRooms('KM', ['Main Block','Block B'],6,['Ground Floor','Floor 1']),              labs:makeLabs('KM', ['Science Block'],4,['Ground Floor','Floor 1']),           halls:makeHalls('KM', ['Main Block'],2)},
+  {id:31, name:'PC Jauhar Campus — Karachi',                short:'PC Jauhar',             area:'Gulistan-e-Jauhar', city:'Karachi',    status:'normal',   temp:27, acActive:52, acFault:0, occ:1100, energy:6.2,  rooms:makeRooms('KJ', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('KJ', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('KJ', ['Main Block'],1)},
+  {id:32, name:'PC DHA / Clifton Campus — Karachi',         short:'PC DHA — Karachi',      area:'DHA Phase II',      city:'Karachi',    status:'normal',   temp:27, acActive:48, acFault:0, occ:950,  energy:5.4,  rooms:makeRooms('KD', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('KD', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('KD', ['Main Block'],1)},
+
+  // ── FAISALABAD ──
+  {id:33, name:'PC Batala Colony Campus — Faisalabad',     short:'PC Batala Colony',      area:'Batala Colony',     city:'Faisalabad', status:'normal',   temp:26, acActive:80, acFault:1, occ:2600, energy:12.1, rooms:makeRooms('FP', ['Block A','Block B','Science Block'],8,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('FP', ['CS Block','Science Block'],5,['Ground Floor','Floor 1']), halls:makeHalls('FP', ['Main Block'],2)},
+  {id:34, name:'PC Canal Road Campus — Faisalabad',        short:'PC Canal Road FSD',     area:'Canal Road',        city:'Faisalabad', status:'normal',   temp:27, acActive:58, acFault:0, occ:1800, energy:8.7,  rooms:makeRooms('FG', ['Main Block','Commerce Block'],6,['Ground Floor','Floor 1']),      labs:makeLabs('FG', ['CS Block'],4,['Ground Floor','Floor 1']),                halls:makeHalls('FG', ['Main Block'],2)},
+  {id:35, name:'PC Jaranwala Road Campus — Faisalabad',    short:'PC Jaranwala Road',     area:'Peoples Colony No.1',city:'Faisalabad',status:'warning',  temp:30, acActive:44, acFault:2, occ:1200, energy:5.9,  rooms:makeRooms('FJ', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('FJ', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('FJ', ['Main Block'],1)},
+  {id:36, name:'PC D-Ground Campus — Faisalabad',          short:'PC D-Ground',           area:'D-Ground',          city:'Faisalabad', status:'normal',   temp:27, acActive:36, acFault:0, occ:900,  energy:4.4,  rooms:makeRooms('FD', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('FD', ['CS Block'],3,['Ground Floor']),                          halls:makeHalls('FD', ['Main Block'],1)},
+  {id:37, name:'PC Satiana Road Campus — Faisalabad',      short:'PC Satiana Road',       area:'Satiana Road',      city:'Faisalabad', status:'normal',   temp:28, acActive:30, acFault:0, occ:750,  energy:3.7,  rooms:makeRooms('FS', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('FS', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('FS', ['Main Block'],1)},
+
+  // ── MULTAN ──
+  {id:38, name:'PC Bosan Road Campus — Multan',             short:'PC Bosan Road',         area:'Bosan Road',        city:'Multan',     status:'normal',   temp:28, acActive:68, acFault:1, occ:2000, energy:9.8,  rooms:makeRooms('MG', ['Block A','Block B'],7,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('MG', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('MG', ['Main Block'],2)},
+  {id:39, name:'PC Gulgasht Campus — Multan',               short:'PC Gulgasht',           area:'Gulgasht Colony',   city:'Multan',     status:'normal',   temp:29, acActive:50, acFault:0, occ:1300, energy:6.4,  rooms:makeRooms('MB', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('MB', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('MB', ['Main Block'],1)},
+  {id:40, name:'PC Bahawalpur Road Campus — Multan',        short:'PC Bahawalpur Rd MLT',  area:'Bahawalpur Road',   city:'Multan',     status:'normal',   temp:30, acActive:40, acFault:0, occ:1000, energy:5.0,  rooms:makeRooms('MR', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('MR', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('MR', ['Main Block'],1)},
+  {id:41, name:'PC Khanewal Road Campus — Multan',          short:'PC Khanewal Road',      area:'Khanewal Road',     city:'Multan',     status:'normal',   temp:30, acActive:34, acFault:0, occ:800,  energy:4.0,  rooms:makeRooms('MK', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('MK', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('MK', ['Main Block'],1)},
+  {id:42, name:'PC Jalalpur Pirwala Campus — Multan',       short:'PC Jalalpur Pirwala',   area:'Jalalpur Pirwala',  city:'Multan',     status:'critical', temp:33, acActive:28, acFault:3, occ:600,  energy:3.1,  rooms:makeRooms('MC', ['Main Block'],4,['Ground Floor','Floor 1']),                      labs:makeLabs('MC', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('MC', ['Main Block'],1)},
+  {id:24, name:'PC Cantt Campus — Multan',               short:'PC Multan Cantt',       area:'Cantt',             city:'Multan',     status:'critical', temp:33, acActive:36, acFault:3, occ:800,  energy:4.1,  rooms:makeRooms('MC', ['Main Block'],4,['Ground Floor','Floor 1']),                      labs:makeLabs('MC', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('MC', ['Main Block'],1)},
+
+  // ── GUJRANWALA ──
+  {id:43, name:'PC Civil Lines Campus — Gujranwala',        short:'PC Civil Lines GRW',    area:'Civil Lines',       city:'Gujranwala', status:'normal',   temp:25, acActive:74, acFault:1, occ:2300, energy:11.0, rooms:makeRooms('GG', ['Block A','Block B','Science Block'],7,['Ground Floor','Floor 1','Floor 2']), labs:makeLabs('GG', ['CS Block','Science Block'],5,['Ground Floor','Floor 1']), halls:makeHalls('GG', ['Main Block'],2)},
+  {id:44, name:'PC Satellite Town Campus — Gujranwala',     short:'PC Satellite Town GRW', area:'Satellite Town',    city:'Gujranwala', status:'normal',   temp:26, acActive:52, acFault:0, occ:1500, energy:7.3,  rooms:makeRooms('GP', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('GP', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('GP', ['Main Block'],1)},
+  {id:45, name:'PC Sialkot Bypass Campus — Gujranwala',     short:'PC Sialkot Bypass GRW', area:'Sialkot Bypass',    city:'Gujranwala', status:'warning',  temp:28, acActive:40, acFault:2, occ:1000, energy:5.2,  rooms:makeRooms('GS', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('GS', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('GS', ['Main Block'],1)},
+  {id:46, name:'PC Kamoke Campus — Gujranwala',             short:'PC Kamoke',             area:'GT Road Kamoke',    city:'Gujranwala', status:'normal',   temp:26, acActive:32, acFault:0, occ:780,  energy:3.9,  rooms:makeRooms('GK', ['Main Block'],4,['Ground Floor','Floor 1']),                       labs:makeLabs('GK', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('GK', ['Main Block'],1)},
+  {id:47, name:'PC Wazirabad Campus — Gujranwala',          short:'PC Wazirabad',          area:'GT Road Wazirabad', city:'Gujranwala', status:'normal',   temp:26, acActive:28, acFault:0, occ:650,  energy:3.3,  rooms:makeRooms('GW', ['Main Block'],3,['Ground Floor','Floor 1']),                       labs:makeLabs('GW', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('GW', ['Main Block'],1)},
+
+  // ── SIALKOT ──
+  {id:48, name:'PC Maharaja Road Campus — Sialkot',         short:'PC Maharaja Road',      area:'Maharaja Road',     city:'Sialkot',    status:'normal',   temp:24, acActive:64, acFault:0, occ:1900, energy:9.2,  rooms:makeRooms('SP', ['Block A','Block B'],7,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('SP', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('SP', ['Main Block'],2)},
+  {id:49, name:'PC Shahab Pura Road Campus — Sialkot',      short:'PC Shahab Pura',        area:'Shahab Pura Road',  city:'Sialkot',    status:'normal',   temp:25, acActive:46, acFault:0, occ:1200, energy:5.8,  rooms:makeRooms('SI', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('SI', ['Science Block'],3,['Ground Floor','Floor 1']),           halls:makeHalls('SI', ['Main Block'],1)},
+  {id:50, name:'PC Sialkot Cantt Campus',                   short:'PC Sialkot Cantt',      area:'Cantt',             city:'Sialkot',    status:'warning',  temp:27, acActive:34, acFault:2, occ:760,  energy:4.0,  rooms:makeRooms('SC', ['Main Block'],4,['Ground Floor','Floor 1']),                      labs:makeLabs('SC', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('SC', ['Main Block'],1)},
+
+  // ── SARGODHA ──
+  {id:51, name:'PC Satellite Town Campus — Sargodha',       short:'PC Satellite SGD',      area:'Satellite Town',    city:'Sargodha',   status:'normal',   temp:26, acActive:60, acFault:1, occ:1700, energy:8.3,  rooms:makeRooms('SG', ['Block A','Block B'],6,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('SG', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('SG', ['Main Block'],2)},
+  {id:52, name:'PC Shamsher Town Campus — Sargodha',        short:'PC Shamsher Town SGD',  area:'Shamsher Town',     city:'Sargodha',   status:'normal',   temp:27, acActive:42, acFault:0, occ:1100, energy:5.4,  rooms:makeRooms('SO', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('SO', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('SO', ['Main Block'],1)},
+
+  // ── BAHAWALPUR ──
+  {id:53, name:'PC Model Town Campus — Bahawalpur',         short:'PC Model Town BWP',     area:'Model Town',        city:'Bahawalpur', status:'normal',   temp:30, acActive:56, acFault:1, occ:1600, energy:8.0,  rooms:makeRooms('BM', ['Block A','Block B'],6,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('BM', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('BM', ['Main Block'],2)},
+  {id:54, name:'PC Yazman Road Campus — Bahawalpur',        short:'PC Yazman Road BWP',    area:'Yazman Road',       city:'Bahawalpur', status:'warning',  temp:32, acActive:40, acFault:2, occ:1000, energy:5.2,  rooms:makeRooms('BY', ['Main Block'],5,['Ground Floor','Floor 1']),                      labs:makeLabs('BY', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('BY', ['Main Block'],1)},
+
+  // ── SAHIWAL ──
+  {id:55, name:'PC Pakpattan Road Campus — Sahiwal',        short:'PC Pakpattan Road SHW', area:'Pakpattan Road',    city:'Sahiwal',    status:'normal',   temp:26, acActive:54, acFault:0, occ:1600, energy:7.8,  rooms:makeRooms('SH', ['Block A','Block B'],6,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('SH', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('SH', ['Main Block'],2)},
+  {id:56, name:'PC Farid Town Campus — Sahiwal',            short:'PC Farid Town SHW',     area:'Farid Town',        city:'Sahiwal',    status:'normal',   temp:27, acActive:38, acFault:0, occ:1000, energy:4.9,  rooms:makeRooms('SF', ['Main Block','Block B'],5,['Ground Floor','Floor 1']),               labs:makeLabs('SF', ['Science Block'],3,['Ground Floor']),                    halls:makeHalls('SF', ['Main Block'],1)},
+  {id:57, name:'PC Chichawatni Campus — Sahiwal',           short:'PC Chichawatni',        area:'Bypass Road',       city:'Sahiwal',    status:'warning',  temp:29, acActive:28, acFault:1, occ:680,  energy:3.5,  rooms:makeRooms('SY', ['Main Block'],4,['Ground Floor','Floor 1']),                      labs:makeLabs('SY', ['Science Block'],2,['Ground Floor']),                    halls:makeHalls('SY', ['Main Block'],1)},
+
+  // ── HYDERABAD ──
+  {id:58, name:'PC Autobahn Road Campus — Hyderabad',       short:'PC Autobahn HYD',       area:'Fateh Chowk',       city:'Hyderabad',  status:'normal',   temp:31, acActive:62, acFault:1, occ:1900, energy:9.4,  rooms:makeRooms('HL', ['Block A','Block B'],6,['Ground Floor','Floor 1','Floor 2']),      labs:makeLabs('HL', ['CS Block','Science Block'],4,['Ground Floor','Floor 1']), halls:makeHalls('HL', ['Main Block'],2)},
+];
+
+// Fix duplicate IDs
+CAMPUSES.forEach((c,i)=>c.id=i);
+
+// Live AC state
+const ACState = {};
+function initACState(c){[...c.rooms,...c.labs,...c.halls].forEach(r=>r.acs.forEach(ac=>{if(!ACState[ac.id])ACState[ac.id]={...ac};}));}
+CAMPUSES.forEach(c=>initACState(c));
+
+// Alerts data
+let ALERTS = [
+  {id:'#ALT-241',alert:'💨 Smoke Detected',    system:'FireSense', campus:'PC Rewaz Garden',city:'Lahore',      loc:'SF-201 · Science 2F',       time:'11:47',severity:'Critical',status:'Open'},
+  {id:'#ALT-240',alert:'❄️ AC Fault',           system:'AIRPro',    campus:'PC Muslim Town',city:'Lahore',       loc:'Room MT-204 · Block B',     time:'11:12',severity:'High',    status:'Open'},
+  {id:'#ALT-239',alert:'🌡️ Overheating Lab',    system:'IRIS Ultra',campus:'PC Township',city:'Lahore',          loc:'Chem Lab TW-L02 · 1F',      time:'10:58',severity:'Medium', status:'Open'},
+  {id:'#ALT-238',alert:'☁️ CO₂ High',           system:'IRIS Ultra',campus:'PC Township',city:'Lahore',          loc:'Auditorium · GF',           time:'10:32',severity:'Low',     status:'Resolved'},
+  {id:'#ALT-237',alert:'💧 Humidity Alert',      system:'IRIS Ultra',campus:'PC Johar Town',city:'Lahore',        loc:'Computer Lab · 1F',         time:'09:15',severity:'Medium', status:'Open'},
+  {id:'#ALT-236',alert:'❄️ AC Fault',           system:'AIRPro',    campus:'PC Aabpara',city:'Islamabad',           loc:'Room IB-102 · Block A',     time:'08:55',severity:'High',    status:'Open'},
+  {id:'#ALT-235',alert:'🌡️ High Temperature',   system:'IRIS Ultra',campus:'PC Gulshan',city:'Karachi',           loc:'Physics Lab · Floor 1',     time:'08:32',severity:'Medium', status:'Open'},
+  {id:'#ALT-234',alert:'💧 Humidity Alert',      system:'IRIS Ultra',campus:'PC Malir',city:'Karachi',             loc:'Computer Lab · GF',         time:'08:10',severity:'Low',     status:'Resolved'},
+  {id:'#ALT-233',alert:'❄️ AC Offline',         system:'AIRPro',    campus:'PC Saddar',city:'Rawalpindi',            loc:'Main Hall · Block B',       time:'07:48',severity:'Medium', status:'Open'},
+  {id:'#ALT-232',alert:'🔥 Fire Sensor Test',   system:'FireSense', campus:'PC Blue Area',city:'Islamabad',         loc:'Admin Block · GF',          time:'07:20',severity:'Low',     status:'Resolved'},
+  {id:'#ALT-231',alert:'☁️ CO₂ High',           system:'IRIS Ultra',campus:'PC Batala Colony',city:'Faisalabad',     loc:'Chemistry Lab · 1F',        time:'06:55',severity:'Medium', status:'Open'},
+  {id:'#ALT-230',alert:'⚡ Power Surge',         system:'AIRPro',    campus:'PC Azam Garden',city:'Lahore',       loc:'Block B · All Floors',      time:'06:30',severity:'High',    status:'Resolved'},
+  {id:'#ALT-229',alert:'💨 Smoke Detected',      system:'FireSense', campus:'PC Peshawar Road',city:'Rawalpindi',     loc:'Chem Lab · Floor 1',        time:'05:10',severity:'High',    status:'Resolved'},
+  {id:'#ALT-228',alert:'🌡️ Overheating',        system:'IRIS Ultra',campus:'PC Jauhar',city:'Karachi',            loc:'Server Room · GF',          time:'04:45',severity:'Critical',status:'Resolved'},
+];
+
+// Users data
+let USERS = [
+  {name:'Super Admin',email:'admin@punjabcollege.edu.pk',role:'Super Admin',campus:'All',status:'Active',lastActive:'Just now'},
+  {name:'Usman Tariq',email:'usman@punjabcollege.edu.pk',role:'Campus Admin',campus:'PC Main — Gulberg',status:'Active',lastActive:'2 min ago'},
+  {name:'Bilal Ahmed',email:'bilal@punjabcollege.edu.pk',role:'Technician',campus:'PC Model Town',status:'Active',lastActive:'14 min ago'},
+  {name:'Sana Khan',email:'sana@punjabcollege.edu.pk',role:'Technician',campus:'PC Township',status:'Active',lastActive:'1 hr ago'},
+  {name:'Farhan Malik',email:'farhan@punjabcollege.edu.pk',role:'Viewer',campus:'PC DHA',status:'Inactive',lastActive:'2 days ago'},
+];
+
+// Env data
+const ENV_ZONES = [
+  // Lahore
+  {zone:'📚 Library',          campus:'PC Rewaz Garden',      city:'Lahore',    temp:21,hum:'55%',aqi:38, co2:'720ppm', occ:142,status:'Normal'},
+  {zone:'🖥️ Computer Lab A',   campus:'PC Muslim Town',       city:'Lahore',    temp:23,hum:'60%',aqi:52, co2:'840ppm', occ:80, status:'Normal'},
+  {zone:'🎭 Auditorium',        campus:'PC Township',          city:'Lahore',    temp:27,hum:'72%',aqi:74, co2:'1100ppm',occ:320,status:'Alert'},
+  {zone:'🔬 Physics Lab',       campus:'PC Ferozepur Road',    city:'Lahore',    temp:31,hum:'68%',aqi:61, co2:'950ppm', occ:55, status:'Warning'},
+  {zone:'🏛️ Main Hall',         campus:'PC Johar Town',        city:'Lahore',    temp:24,hum:'58%',aqi:44, co2:'780ppm', occ:180,status:'Normal'},
+  {zone:'🖥️ Computer Lab',      campus:'PC Mughalpura',        city:'Lahore',    temp:22,hum:'56%',aqi:40, co2:'700ppm', occ:65, status:'Normal'},
+  {zone:'🔬 Chemistry Lab',     campus:'PC DHA — Lahore',      city:'Lahore',    temp:25,hum:'63%',aqi:48, co2:'810ppm', occ:45, status:'Normal'},
+  {zone:'📖 Study Hall',        campus:'PC Azam Garden',       city:'Lahore',    temp:33,hum:'70%',aqi:88, co2:'1200ppm',occ:95, status:'Alert'},
+  // Islamabad
+  {zone:'🖥️ CS Lab A',          campus:'PC Aabpara',           city:'Islamabad', temp:21,hum:'52%',aqi:32, co2:'680ppm', occ:72, status:'Normal'},
+  {zone:'🔬 Biology Lab',       campus:'PC Blue Area',         city:'Islamabad', temp:22,hum:'54%',aqi:35, co2:'710ppm', occ:48, status:'Normal'},
+  {zone:'🏛️ Assembly Hall',     campus:'PC G-10',              city:'Islamabad', temp:26,hum:'65%',aqi:55, co2:'890ppm', occ:280,status:'Warning'},
+  {zone:'📚 Library',           campus:'PC H-11',              city:'Islamabad', temp:20,hum:'50%',aqi:28, co2:'650ppm', occ:110,status:'Normal'},
+  // Rawalpindi
+  {zone:'🔬 Chemistry Lab',     campus:'PC Saddar',            city:'Rawalpindi',temp:24,hum:'62%',aqi:50, co2:'820ppm', occ:58, status:'Normal'},
+  {zone:'🎭 Auditorium',        campus:'PC Satellite Town RWP',city:'Rawalpindi',temp:25,hum:'64%',aqi:46, co2:'800ppm', occ:210,status:'Normal'},
+  {zone:'🖥️ Computer Lab',      campus:'PC Peshawar Road',     city:'Rawalpindi',temp:29,hum:'71%',aqi:68, co2:'1050ppm',occ:80, status:'Warning'},
+  // Karachi
+  {zone:'🏛️ Main Hall',         campus:'PC Gulshan',           city:'Karachi',   temp:29,hum:'78%',aqi:82, co2:'1080ppm',occ:350,status:'Warning'},
+  {zone:'🖥️ CS Lab B',          campus:'PC North Nazimabad',   city:'Karachi',   temp:28,hum:'75%',aqi:70, co2:'980ppm', occ:90, status:'Normal'},
+  {zone:'🔬 Physics Lab',       campus:'PC Malir',             city:'Karachi',   temp:31,hum:'80%',aqi:95, co2:'1280ppm',occ:55, status:'Alert'},
+  // Faisalabad
+  {zone:'📖 Study Hall',        campus:'PC Batala Colony',     city:'Faisalabad',temp:26,hum:'61%',aqi:53, co2:'870ppm', occ:130,status:'Normal'},
+  {zone:'🔬 Chemistry Lab',     campus:'PC Canal Road FSD',    city:'Faisalabad',temp:28,hum:'67%',aqi:62, co2:'960ppm', occ:52, status:'Normal'},
+  // Hyderabad
+  {zone:'🏛️ Assembly Hall',     campus:'PC Autobahn HYD',      city:'Hyderabad', temp:31,hum:'74%',aqi:78, co2:'1050ppm',occ:200,status:'Warning'},
+];
+
+// ══════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════
+function sClass(s){return s==='normal'?'sn':s==='warning'?'sw':'sc';}
+function sDot(s){return s==='normal'?'g':s==='warning'?'y':'r';}
+function sPill(s){return s==='normal'?'<span class="pill p-g">● Normal</span>':s==='warning'?'<span class="pill p-y">⚠ Warning</span>':'<span class="pill p-r">🔴 Critical</span>';}
+function tCol(t){return t<=23?'var(--blue)':t<=27?'var(--green)':t<=30?'var(--yellow)':'var(--red)';}
+function tClass(t){return t<=22?'tc':t<=26?'tn':t<=29?'tw2':'th';}
+
+function showToast(msg, type='info'){
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = {success:'✅',error:'❌',info:'ℹ️'};
+  t.innerHTML = `<span>${icons[type]||'ℹ️'}</span>${msg}`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},3000);
+}
+
+function showLoading(){document.getElementById('loading').classList.add('show');}
+function hideLoading(){document.getElementById('loading').classList.remove('show');}
+
+// ══════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleString('en-PK',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});}
+setInterval(tick,1000);tick();
+
+// ══════════════════════════════════════════
+// CAMPUS FILTER DROPDOWN (TOPBAR)
+// ══════════════════════════════════════════
+function buildCampusDropdown(){
+  const sel = document.getElementById('campus-filter');
+  const acF = document.getElementById('ac-campus-f');
+  const cities = getCitySummary();
+  Object.entries(cities).forEach(([cityName, city])=>{
+    const og = document.createElement('optgroup');
+    og.label = cityName;
+    city.campuses.forEach(c=>{
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = '📍 '+c.short;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+    city.campuses.forEach(c=>{
+      const o2 = document.createElement('option');
+      o2.value = c.id; o2.textContent = c.short;
+      if(acF) acF.appendChild(o2);
+    });
+  });
+}
+
+function filterByCampus(){
+  const val = document.getElementById('campus-filter').value;
+  if(val===''){
+    renderCityCards();
+    renderCards('camps-grid');
+  } else {
+    const cid = parseInt(val);
+    CUR_CITY = null; // Direct campus open from dropdown
+    openCampus(cid);
+    document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  }
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const PT = {
+  dashboard:'Dashboard Overview',campuses:'All Campuses — Punjab College Pakistan',
+  ac:'AC Management — AIRPro',env:'Environment — IRIS Ultra',
+  fire:'Fire & Safety — FireSense',energy:'Energy Analytics',
+  alerts:'Alerts & Notifications',reports:'Reports',users:'Users & Roles',settings:'Settings'
+};
+
+function showPage(id, el){
+  document.getElementById('cd').classList.remove('active');
+  document.getElementById('city-detail').classList.remove('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('tb-title').textContent = PT[id]||'';
+  if(id==='dashboard'||id==='campuses'){renderCityCards();renderCards('camps-grid');buildCharts();}
+  if(id==='ac') buildACGlobal();
+  if(id==='env') renderEnvTable();
+  if(id==='alerts') renderAlerts();
+  if(id==='users') renderUsers();
+  if(id==='energy') renderEnergy();
+  document.querySelector(".main").scrollTo(0,0);
+}
+
+
+
+
+
+
+// ══════════════════════════════════════════
+// CITIES DEFINITION
+// ══════════════════════════════════════════
+const CITY_META = {
+  'Lahore':     {icon:'🏙️', province:'Punjab'},
+  'Islamabad':  {icon:'🏛️', province:'Federal Capital'},
+  'Rawalpindi': {icon:'⚔️', province:'Punjab'},
+  'Karachi':    {icon:'🌊', province:'Sindh'},
+  'Faisalabad': {icon:'🏭', province:'Punjab'},
+  'Multan':     {icon:'🌹', province:'Punjab'},
+  'Gujranwala': {icon:'🦁', province:'Punjab'},
+  'Sialkot':    {icon:'⚽', province:'Punjab'},
+  'Sargodha':   {icon:'🍊', province:'Punjab'},
+  'Bahawalpur': {icon:'🏜️', province:'Punjab'},
+  'Hyderabad':  {icon:'🏺', province:'Sindh'},
+  'Sahiwal':    {icon:'🌾', province:'Punjab'},
+};
+
+function getCitySummary(){
+  const cities = {};
+  CAMPUSES.forEach(c=>{
+    if(!cities[c.city]) cities[c.city]={
+      name:c.city, campuses:[], acActive:0, acFault:0, occ:0, energy:0, status:'normal'
+    };
+    const city = cities[c.city];
+    city.campuses.push(c);
+    city.acActive += c.acActive;
+    city.acFault += c.acFault;
+    city.occ += c.occ;
+    city.energy += parseFloat(c.energy);
+    if(c.status==='critical') city.status='critical';
+    else if(c.status==='warning' && city.status!=='critical') city.status='warning';
+  });
+  return cities;
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD KPIs (updated for multi-city)
+// ══════════════════════════════════════════
+function buildDashKPIs(){
+  const totalAC = CAMPUSES.reduce((s,c)=>s+c.acActive,0);
+  const totalFault = CAMPUSES.reduce((s,c)=>s+c.acFault,0);
+  const totalOcc = CAMPUSES.reduce((s,c)=>s+c.occ,0);
+  const totalRooms = CAMPUSES.reduce((s,c)=>s+c.rooms.length+c.labs.length+c.halls.length,0);
+  const avgTemp = (CAMPUSES.reduce((s,c)=>s+c.temp,0)/CAMPUSES.length).toFixed(1);
+  const totalEnergy = CAMPUSES.reduce((s,c)=>s+c.energy,0).toFixed(1);
+  const cities = getCitySummary();
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kc kb"><div class="kc-i">🏙️</div><div class="kc-v">${Object.keys(cities).length}</div><div class="kc-l">Cities</div></div>
+    <div class="kc kg"><div class="kc-i">🏫</div><div class="kc-v">${CAMPUSES.length}</div><div class="kc-l">Total Campuses</div></div>
+    <div class="kc kg"><div class="kc-i">❄️</div><div class="kc-v">${totalAC}</div><div class="kc-l">AC Units Active</div></div>
+    <div class="kc kr"><div class="kc-i">⚠️</div><div class="kc-v">${totalFault}</div><div class="kc-l">AC Units Faulty</div></div>
+    <div class="kc ky"><div class="kc-i">⚡</div><div class="kc-v">${totalEnergy} kWh</div><div class="kc-l">Energy Today</div></div>
+    <div class="kc kp"><div class="kc-i">🌡️</div><div class="kc-v">${avgTemp}°C</div><div class="kc-l">Avg Temperature</div></div>
+    <div class="kc kb"><div class="kc-i">👥</div><div class="kc-v">${totalOcc.toLocaleString()}</div><div class="kc-l">Total Occupancy</div></div>`;
+  document.getElementById('dash-city-count').textContent = Object.keys(cities).length;
+  document.getElementById('dash-campus-count').textContent = CAMPUSES.length;
+}
+
+// ══════════════════════════════════════════
+// RENDER CITY CARDS (Dashboard)
+// ══════════════════════════════════════════
+function renderCityCards(){
+  const grid = document.getElementById('dash-city-grid');
+  if(!grid) return;
+  const cities = getCitySummary();
+  grid.innerHTML = Object.values(cities).map(city=>{
+    const meta = CITY_META[city.name]||{icon:'🏙️',province:'Pakistan'};
+    const statusClass = city.status==='critical'?'city-critical':city.status==='warning'?'city-warning':'city-normal';
+    const critCount = city.campuses.filter(c=>c.status==='critical').length;
+    const warnCount = city.campuses.filter(c=>c.status==='warning').length;
+    return `
+      <div class="city-card ${statusClass}" onclick="openCity('${city.name}')" title="View ${city.name} campuses">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div class="city-card-icon">${meta.icon}</div>
+          <div class="sdot ${city.status==='critical'?'r':city.status==='warning'?'y':'g'}"></div>
+        </div>
+        <div>
+          <div class="city-card-name">${city.name}</div>
+          <div class="city-card-meta">📍 ${meta.province}</div>
+        </div>
+        <div class="city-card-stats">
+          <div class="city-stat"><div class="city-stat-v" style="color:var(--blue)">${city.campuses.length}</div><div class="city-stat-l">Campuses</div></div>
+          <div class="city-stat"><div class="city-stat-v" style="color:var(--green)">${city.acActive}</div><div class="city-stat-l">AC Active</div></div>
+          <div class="city-stat"><div class="city-stat-v" style="color:${tCol(Math.round(city.energy/city.campuses.length))}">${city.energy.toFixed(1)}</div><div class="city-stat-l">kWh</div></div>
+        </div>
+        <div class="city-card-footer">
+          ${city.status==='critical'?`<span class="pill p-r">🔴 ${critCount} Critical</span>`:city.status==='warning'?`<span class="pill p-y">⚠ ${warnCount} Warning</span>`:'<span class="pill p-g">● All Normal</span>'}
+          <span style="font-size:11px;font-weight:800;color:var(--blue)">View →</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// OPEN CITY DETAIL
+// ══════════════════════════════════════════
+let CUR_CITY = null;
+
+function openCity(cityName){
+  const cities = getCitySummary();
+  CUR_CITY = cities[cityName];
+  if(!CUR_CITY) return;
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('cd').classList.remove('active');
+  document.getElementById('city-detail').classList.add('active');
+  document.getElementById('tb-title').textContent = cityName + ' — Campuses';
+  document.getElementById('city-breadcrumb-name').textContent = cityName;
+  document.getElementById('city-detail-name').textContent = cityName + ' Campuses';
+  const meta = CITY_META[cityName]||{icon:'🏙️',province:'Pakistan'};
+  document.getElementById('city-detail-meta').textContent = `${meta.icon} ${meta.province} · ${CUR_CITY.campuses.length} campuses · AIRPro Smart System`;
+
+  document.getElementById('city-detail-pills').innerHTML = `
+    ${sPill(CUR_CITY.status)}
+    <span class="pill p-b">🏫 ${CUR_CITY.campuses.length} Campuses</span>
+    <span class="pill p-g">❄️ ${CUR_CITY.acActive} AC Active</span>
+    ${CUR_CITY.acFault>0?`<span class="pill p-r">⚠ ${CUR_CITY.acFault} Faulty</span>`:''}
+    <span class="pill p-p">👥 ${CUR_CITY.occ.toLocaleString()} Occupancy</span>
+    <span class="pill p-t">⚡ ${CUR_CITY.energy.toFixed(1)} kWh</span>`;
+
+  const totalRooms = CUR_CITY.campuses.reduce((s,c)=>s+c.rooms.length,0);
+  const totalLabs = CUR_CITY.campuses.reduce((s,c)=>s+c.labs.length,0);
+  const totalHalls = CUR_CITY.campuses.reduce((s,c)=>s+c.halls.length,0);
+  const avgTemp = (CUR_CITY.campuses.reduce((s,c)=>s+c.temp,0)/CUR_CITY.campuses.length).toFixed(1);
+  document.getElementById('city-detail-stats').innerHTML = `
+    <div class="hs"><div class="hs-v" style="color:var(--blue)">${CUR_CITY.campuses.length}</div><div class="hs-l">Campuses</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--purple)">${totalRooms}</div><div class="hs-l">Classrooms</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--orange)">${totalLabs}</div><div class="hs-l">Labs</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--green)">${totalHalls}</div><div class="hs-l">Halls</div></div>
+    <div class="hs"><div class="hs-v" style="color:${tCol(parseFloat(avgTemp))}">${avgTemp}°C</div><div class="hs-l">Avg Temp</div></div>`;
+
+  document.getElementById('city-campus-label').textContent = cityName;
+  document.getElementById('city-camp-search').value='';
+  document.getElementById('city-camp-status').value='';
+  renderCityDetail();
+  document.querySelector(".main").scrollTo(0,0);
+}
+
+function filterCityDetail(){renderCityDetail();}
+
+function renderCityDetail(){
+  if(!CUR_CITY) return;
+  const search = (document.getElementById('city-camp-search')?.value||'').toLowerCase();
+  const statusF = document.getElementById('city-camp-status')?.value||'';
+  const grid = document.getElementById('city-campuses-grid');
+  const filtered = CUR_CITY.campuses.filter(c=>{
+    if(search && !c.name.toLowerCase().includes(search) && !c.area.toLowerCase().includes(search)) return false;
+    if(statusF && c.status!==statusF) return false;
+    return true;
+  });
+  grid.innerHTML = filtered.map(c=>`
+    <div class="cc ${sClass(c.status)}" onclick="openCampus(${c.id})" title="Click to view ${c.short} details">
+      <div class="cc-h">
+        <div><div class="cc-nm">${c.short}</div><div class="cc-lc">📍 ${c.area}, ${c.city}</div></div>
+        <div class="sdot ${sDot(c.status)}"></div>
+      </div>
+      <div class="cc-st">
+        <div class="cs"><div class="cs-v" style="color:var(--purple)">${c.acActive+c.acFault}</div><div class="cs-l">Total AC</div></div>
+        <div class="cs"><div class="cs-v" style="color:var(--green)">${c.acActive}</div><div class="cs-l">AC Active</div></div>
+        <div class="cs"><div class="cs-v" style="color:${tCol(c.temp)}">${c.temp}°C</div><div class="cs-l">Avg Temp</div></div>
+      </div>
+      <div class="cc-footer">
+        ${sPill(c.status)}
+        <span class="cc-arrow">View Details →</span>
+      </div>
+    </div>`).join('');
+}
+
+function goHome(){
+  document.getElementById('city-detail').classList.remove('active');
+  document.getElementById('cd').classList.remove('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-dashboard').classList.add('active');
+  document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nv')[0].classList.add('active');
+  document.getElementById('tb-title').textContent = 'Dashboard Overview';
+  document.querySelector(".main").scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════
+// CAMPUS CARDS for All Campuses page
+// ══════════════════════════════════════════
+function renderCards(cid){
+  const cont = document.getElementById(cid); if(!cont) return;
+  const searchVal = cid==='camps-grid'?(document.getElementById('camp-search')?.value||'').toLowerCase():'';
+  const statusVal = cid==='camps-grid'?(document.getElementById('camp-status')?.value||''):'';
+  const data = CAMPUSES.filter(c=>{
+    if(searchVal && !c.name.toLowerCase().includes(searchVal) && !c.area.toLowerCase().includes(searchVal) && !c.city.toLowerCase().includes(searchVal)) return false;
+    if(statusVal && c.status!==statusVal) return false;
+    return true;
+  });
+  cont.innerHTML = data.map(c=>`
+    <div class="cc ${sClass(c.status)}" onclick="openCampus(${c.id})" title="Click to view ${c.short} details">
+      <div class="cc-h">
+        <div><div class="cc-nm">${c.short}</div><div class="cc-lc">📍 ${c.area}, ${c.city}</div></div>
+        <div class="sdot ${sDot(c.status)}"></div>
+      </div>
+      <div class="cc-st">
+        <div class="cs"><div class="cs-v" style="color:var(--purple)">${c.acActive+c.acFault}</div><div class="cs-l">Total AC</div></div>
+        <div class="cs"><div class="cs-v" style="color:var(--green)">${c.acActive}</div><div class="cs-l">AC Active</div></div>
+        <div class="cs"><div class="cs-v" style="color:${tCol(c.temp)}">${c.temp}°C</div><div class="cs-l">Avg Temp</div></div>
+      </div>
+      <div class="cc-footer">
+        ${sPill(c.status)}
+        <span class="cc-arrow">View Details →</span>
+      </div>
+    </div>`).join('');
+}
+
+function filterCampuses(){renderCards('camps-grid');}
+
+
+
+// ══════════════════════════════════════════
+// CAMPUS DETAIL
+// ══════════════════════════════════════════
+let CUR = null;
+
+function openCampus(id){
+  CUR = CAMPUSES[id];
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('city-detail').classList.remove('active');
+  document.getElementById('cd').classList.add('active');
+  document.getElementById('tb-title').textContent = CUR.short + ' — Rooms & AC Details';
+
+  document.getElementById('cd-name').textContent = CUR.name;
+  document.getElementById('cd-loc').textContent = '📍 '+CUR.area+', '+CUR.city;
+  const bcCity = document.getElementById('campus-breadcrumb-city');
+  if(bcCity) bcCity.textContent = CUR.city;
+  const bcName = document.getElementById('campus-breadcrumb-name');
+  if(bcName) bcName.textContent = CUR.short;
+
+  const totalRooms=CUR.rooms.length, totalLabs=CUR.labs.length, totalHalls=CUR.halls.length;
+  const allAC=[...CUR.rooms,...CUR.labs,...CUR.halls].reduce((s,r)=>s+r.acs.length,0);
+  document.getElementById('cd-pills').innerHTML=`
+    ${sPill(CUR.status)}
+    <span class="pill p-b">❄️ ${CUR.acActive} AC Active</span>
+    ${CUR.acFault>0?`<span class="pill p-r">⚠ ${CUR.acFault} Faulty</span>`:''}
+    <span class="pill p-p">👥 ${CUR.occ.toLocaleString()} Occupancy</span>
+    <span class="pill p-t">⚡ ${CUR.energy} kWh</span>`;
+  document.getElementById('cd-stats').innerHTML=`
+    <div class="hs"><div class="hs-v" style="color:var(--blue)">${totalRooms}</div><div class="hs-l">Classrooms</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--purple)">${totalLabs}</div><div class="hs-l">Labs</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--orange)">${totalHalls}</div><div class="hs-l">Halls</div></div>
+    <div class="hs"><div class="hs-v" style="color:var(--green)">${allAC}</div><div class="hs-l">AC Units</div></div>
+    <div class="hs"><div class="hs-v" style="color:${tCol(CUR.temp)}">${CUR.temp}°C</div><div class="hs-l">Avg Temp</div></div>`;
+
+  const blocks=[...new Set([...CUR.rooms,...CUR.labs,...CUR.halls].map(r=>r.block))];
+  const fb = document.getElementById('fb');
+  fb.innerHTML = '<option value="">All Blocks</option>'+blocks.map(b=>`<option value="${b}">${b}</option>`).join('');
+
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>{p.classList.toggle('active',i===0);});
+  document.getElementById('srch').value='';
+  document.getElementById('ff').value='';
+  document.getElementById('fa').value='';
+  document.getElementById('fb').value='';
+
+  renderTable('rooms','tb-rooms','rm-cnt');
+  renderTable('labs','tb-labs','lab-cnt');
+  renderTable('halls','tb-halls','hall-cnt');
+  renderSummary();
+  document.querySelector(".main").scrollTo(0,0);
+}
+
+function closeCampus(){
+  document.getElementById('cd').classList.remove('active');
+  if(CUR_CITY){
+    document.getElementById('city-detail').classList.add('active');
+    document.getElementById('tb-title').textContent = CUR_CITY.name + ' — Campuses';
+  } else {
+    showPage('campuses', document.querySelectorAll('.nv')[1]);
+  }
+}
+
+function refreshCampus(){
+  showLoading();
+  setTimeout(()=>{
+    if(CUR){renderTable('rooms','tb-rooms','rm-cnt');renderTable('labs','tb-labs','lab-cnt');renderTable('halls','tb-halls','hall-cnt');renderSummary();}
+    hideLoading();
+    showToast('Campus data refreshed','success');
+  },800);
+}
+
+// ══════════════════════════════════════════
+// TABLE RENDER
+// ══════════════════════════════════════════
+function renderTable(type,tbodyId,cntId){
+  if(!CUR) return;
+  const data = type==='rooms'?CUR.rooms:type==='labs'?CUR.labs:CUR.halls;
+  document.getElementById(cntId).textContent=`${data.length} ${type==='rooms'?'classrooms':type==='labs'?'labs':'halls'}`;
+  const tbody = document.getElementById(tbodyId);
+  const isHalls = type==='halls';
+  tbody.innerHTML = data.map(room=>{
+    return room.acs.map((ac,ai)=>{
+      const st = ACState[ac.id]||ac;
+      const isFirst = ai===0;
+      const rowspan = room.acs.length;
+      const stPill = st.status==='ON'?'<span class="pill p-g">● ON</span>':st.status==='FAULT'?'<span class="pill p-r">⚠ FAULT</span>':'<span class="pill p-gr">○ OFF</span>';
+      const mPill = st.mode!=='—'?`<span class="pill p-b">${st.mode}</span>`:'—';
+      const controlCell = isHalls?'' : `<td>${st.status!=='FAULT'?`<div style="display:flex;align-items:center;gap:5px">
+        <label class="tgl"><input type="checkbox" ${st.status==='ON'?'checked':''} onchange="toggleAC('${st.id}','${tbodyId}','${type}',this)"/><span class="tgl-s"></span></label>
+        ${st.status==='ON'?`<button class="btn btn-xs bxb" style="padding:3px 7px" onclick="adj('${st.id}','${tbodyId}','${type}',-1)">−</button><button class="btn btn-xs bxb" style="padding:3px 7px" onclick="adj('${st.id}','${tbodyId}','${type}',1)">+</button><button class="btn btn-xs bxb" onclick="openACModal('${st.id}')">⚙</button>`:''}
+      </div>`:`<button class="btn btn-xs bxr" onclick="reportFault('${st.id}')">⚠ Report</button>`}</td>`;
+      return `<tr data-room="${room.id}" data-block="${room.block}" data-floor="${room.floor}" data-acs="${st.status}">
+        ${isFirst?`
+        <td rowspan="${rowspan}" class="mono" style="font-weight:700;white-space:nowrap">${room.id}</td>
+        <td rowspan="${rowspan}" style="font-weight:700;white-space:nowrap">${room.name}</td>
+        <td rowspan="${rowspan}"><span class="pill p-gr">${room.block}</span></td>
+        <td rowspan="${rowspan}"><span class="pill p-gr">${room.floor}</span></td>
+        <td rowspan="${rowspan}" style="text-align:center;font-weight:700">${room.cap}</td>`:''}
+        <td class="mono" style="color:var(--blue);font-weight:700;white-space:nowrap">${st.id}</td>
+        <td>${stPill}</td>
+        <td>${mPill}</td>
+        <td style="text-align:center;font-weight:700">${st.setTemp!=='—'?st.setTemp+'°C':'—'}</td>
+        <td class="${tClass(room.roomTemp)}">${room.roomTemp}°C</td>
+        <td style="text-align:center">${st.energy>0?`<span class="mono" style="font-weight:700">${st.energy}</span> <small style="color:var(--text3)">kWh</small>`:'—'}</td>
+        ${controlCell}
+      </tr>`;
+    }).join('');
+  }).join('');
+}
+
+function toggleAC(acId,tbodyId,type,el){
+  const s=ACState[acId];if(!s)return;
+  s.status=el.checked?'ON':'OFF';s.mode=el.checked?'Cool':'—';s.setTemp=el.checked?22:'—';s.energy=el.checked?+(Math.random()*2+0.4).toFixed(2):0;
+  renderTable(type,tbodyId,type==='rooms'?'rm-cnt':type==='labs'?'lab-cnt':'hall-cnt');
+  doFilter();renderSummary();
+  showToast(`AC ${acId} ${el.checked?'turned ON':'turned OFF'}`,el.checked?'success':'info');
+}
+
+function adj(acId,tbodyId,type,d){
+  const s=ACState[acId];if(!s||s.setTemp==='—')return;
+  s.setTemp=Math.max(16,Math.min(30,s.setTemp+d));
+  renderTable(type,tbodyId,type==='rooms'?'rm-cnt':type==='labs'?'lab-cnt':'hall-cnt');
+  doFilter();
+}
+
+function reportFault(acId){showToast(`Fault report submitted for ${acId}`,'info');}
+
+// ══════════════════════════════════════════
+// AC MODAL
+// ══════════════════════════════════════════
+let _curACId = null;
+function openACModal(acId){
+  _curACId = acId;
+  const s = ACState[acId]; if(!s) return;
+  document.getElementById('ac-modal-title').textContent = `AC Control — ${acId}`;
+  document.getElementById('ac-modal-body').innerHTML = `
+    <div class="modal-field"><label class="modal-label">Status</label>
+      <select class="modal-input" id="m-status"><option ${s.status==='ON'?'selected':''}>ON</option><option ${s.status==='OFF'?'selected':''}>OFF</option></select></div>
+    <div class="modal-field"><label class="modal-label">Mode</label>
+      <select class="modal-input" id="m-mode"><option>Cool</option><option>Fan</option><option>Dry</option><option>Heat</option></select></div>
+    <div class="modal-field"><label class="modal-label">Set Temperature (°C)</label>
+      <input class="modal-input" id="m-temp" type="number" min="16" max="30" value="${s.setTemp!=='—'?s.setTemp:22}"/></div>`;
+  document.getElementById('ac-modal').classList.add('open');
+}
+function saveACModal(){
+  if(!_curACId) return;
+  const s = ACState[_curACId];
+  s.status = document.getElementById('m-status').value;
+  s.mode = document.getElementById('m-mode').value;
+  s.setTemp = parseInt(document.getElementById('m-temp').value);
+  s.energy = s.status==='ON'?+(Math.random()*2+0.4).toFixed(2):0;
+  closeModal('ac-modal');
+  if(CUR){renderTable('rooms','tb-rooms','rm-cnt');renderTable('labs','tb-labs','lab-cnt');renderTable('halls','tb-halls','hall-cnt');doFilter();renderSummary();}
+  showToast(`AC ${_curACId} settings saved`,'success');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ══════════════════════════════════════════
+// FILTER
+// ══════════════════════════════════════════
+function doFilter(){
+  const s = document.getElementById('srch').value.toLowerCase();
+  const fl = (document.getElementById('ff').value||'').toLowerCase();
+  const ac = (document.getElementById('fa').value||'').toLowerCase();
+  const bl = (document.getElementById('fb').value||'').toLowerCase();
+  ['tb-rooms','tb-labs','tb-halls'].forEach(id=>{
+    const tbody = document.getElementById(id); if(!tbody) return;
+    tbody.querySelectorAll('tr').forEach(tr=>{
+      const txt = tr.textContent.toLowerCase();
+      const tfl = (tr.dataset.floor||'').toLowerCase();
+      const tbl = (tr.dataset.block||'').toLowerCase();
+      const tac = (tr.dataset.acs||'').toLowerCase();
+      const ok = (!s||txt.includes(s))&&(!fl||tfl.includes(fl))&&(!bl||tbl.includes(bl))&&(!ac||tac===ac);
+      tr.style.display = ok?'':'none';
+    });
+  });
+}
+
+// ══════════════════════════════════════════
+// AC SUMMARY
+// ══════════════════════════════════════════
+function renderSummary(){
+  if(!CUR) return;
+  const allAC = [...CUR.rooms,...CUR.labs,...CUR.halls].flatMap(r=>r.acs.map(a=>ACState[a.id]||a));
+  const on=allAC.filter(a=>a.status==='ON').length;
+  const off=allAC.filter(a=>a.status==='OFF').length;
+  const fault=allAC.filter(a=>a.status==='FAULT').length;
+  document.getElementById('sum-status').innerHTML=`
+    <div style="text-align:center;padding:12px 0;margin-bottom:16px">
+      <div style="font-size:32px;font-weight:900">${allAC.length}</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;margin-top:3px">Total AC Units</div>
+    </div>
+    <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px"><span>🟢 ON</span><span>${on} (${Math.round(on/allAC.length*100)}%)</span></div><div class="prog"><div class="pf" style="width:${on/allAC.length*100}%;background:var(--green)"></div></div></div>
+    <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px"><span>⚪ OFF</span><span>${off} (${Math.round(off/allAC.length*100)}%)</span></div><div class="prog"><div class="pf" style="width:${off/allAC.length*100}%;background:var(--text3)"></div></div></div>
+    <div><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px"><span>🔴 FAULT</span><span>${fault} (${Math.round(fault/allAC.length*100)||'<1'}%)</span></div><div class="prog"><div class="pf" style="width:${Math.max(fault/allAC.length*100,1)}%;background:var(--red)"></div></div></div>`;
+  const floors=['Ground Floor','Floor 1','Floor 2','Floor 3'];
+  const fe=floors.map(f=>{
+    const units=[...CUR.rooms,...CUR.labs,...CUR.halls].filter(r=>r.floor===f).flatMap(r=>r.acs.map(a=>ACState[a.id]||a));
+    return{f,e:units.reduce((s,a)=>s+(a.energy||0),0).toFixed(1)};
+  }).filter(x=>parseFloat(x.e)>0);
+  const me=Math.max(...fe.map(x=>parseFloat(x.e)));
+  document.getElementById('sum-floor').innerHTML=fe.map(x=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px"><span>${x.f}</span><span>${x.e} kWh</span></div><div class="prog"><div class="pf" style="width:${parseFloat(x.e)/me*100}%;background:var(--blue)"></div></div></div>`).join('');
+  const tc={};allAC.forEach(a=>{tc[a.type]=(tc[a.type]||0)+1;});
+  const cs=['var(--blue)','var(--purple)','var(--green)','var(--orange)','var(--teal)'];
+  document.getElementById('sum-types').innerHTML=Object.entries(tc).map(([t,c],i)=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px"><span>${t}</span><span>${c}</span></div><div class="prog"><div class="pf" style="width:${c/allAC.length*100}%;background:${cs[i%cs.length]}"></div></div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='summary') renderSummary();
+}
+
+// ══════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════
+function buildCharts(){
+  const cityColors = {
+    'Lahore':'#8B1A2D','Islamabad':'#1B2F5E','Rawalpindi':'#c2410c',
+    'Karachi':'#0f766e','Faisalabad':'#b45309','Hyderabad':'#5b21b6',
+    'Multan':'#0d7e50','Peshawar':'#1e40af'
+  };
+  function getColor(city){ return cityColors[city]||'#64748b'; }
+
+  // Group campuses by city for summary
+  const cityMap = {};
+  CAMPUSES.forEach(c=>{
+    if(!cityMap[c.city]) cityMap[c.city]={energy:0,temp:[],campuses:0};
+    cityMap[c.city].energy += c.energy;
+    cityMap[c.city].temp.push(c.temp);
+    cityMap[c.city].campuses++;
+  });
+
+  // ── Dashboard Energy chart: horizontal bars by city ──
+  const ec = document.getElementById('ec');
+  const ecL = document.getElementById('ec-labels');
+  if(ec){
+    const cities = Object.entries(cityMap).sort((a,b)=>b[1].energy-a[1].energy);
+    const maxE = Math.max(...cities.map(([,v])=>v.energy));
+    ec.style.cssText='height:auto;display:block;width:100%;padding:4px 0';
+    ec.innerHTML = cities.map(([city,v])=>`
+      <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px">
+        <div style="width:90px;font-size:11px;font-weight:700;color:var(--text1);text-align:right;flex-shrink:0">${city}</div>
+        <div style="flex:1;background:var(--border);border-radius:99px;height:14px;overflow:hidden">
+          <div style="height:100%;width:${(v.energy/maxE)*100}%;background:${getColor(city)};border-radius:99px;transition:.5s"></div>
+        </div>
+        <div style="width:70px;font-size:11px;font-weight:800;color:${getColor(city)}">${v.energy.toFixed(1)} kWh</div>
+      </div>`).join('');
+    if(ecL) ecL.innerHTML='';
+  }
+
+  // ── Dashboard Temp chart: horizontal bars by city ──
+  const tc2 = document.getElementById('tc2');
+  const tc2L = document.getElementById('tc2-labels');
+  if(tc2){
+    const cities = Object.entries(cityMap).sort((a,b)=>{
+      const aAvg=a[1].temp.reduce((s,t)=>s+t,0)/a[1].temp.length;
+      const bAvg=b[1].temp.reduce((s,t)=>s+t,0)/b[1].temp.length;
+      return bAvg-aAvg;
+    });
+    const maxT = Math.max(...cities.map(([,v])=>Math.max(...v.temp)));
+    tc2.style.cssText='height:auto;display:block;width:100%;padding:4px 0';
+    tc2.innerHTML = cities.map(([city,v])=>{
+      const avg = (v.temp.reduce((s,t)=>s+t,0)/v.temp.length).toFixed(1);
+      const col = parseFloat(avg)<=23?'var(--blue)':parseFloat(avg)<=27?'var(--green)':parseFloat(avg)<=30?'var(--yellow)':'var(--red)';
+      return`<div style="margin-bottom:8px;display:flex;align-items:center;gap:10px">
+        <div style="width:90px;font-size:11px;font-weight:700;color:var(--text1);text-align:right;flex-shrink:0">${city}</div>
+        <div style="flex:1;background:var(--border);border-radius:99px;height:14px;overflow:hidden">
+          <div style="height:100%;width:${(parseFloat(avg)/maxT)*100}%;background:${col};border-radius:99px;transition:.5s"></div>
+        </div>
+        <div style="width:50px;font-size:11px;font-weight:800;color:${col}">${avg}°C</div>
+      </div>`;
+    }).join('');
+    if(tc2L) tc2L.innerHTML='';
+  }
+
+  // Energy total KPI
+  const totalE = CAMPUSES.reduce((s,c)=>s+c.energy,0);
+  const eEl = document.getElementById('e-today');
+  if(eEl) eEl.textContent = totalE.toFixed(1)+' kWh';
+}
+
+// ══════════════════════════════════════════
+// AC GLOBAL TABLE
+// ══════════════════════════════════════════
+function buildACGlobal(){
+  const tbody = document.getElementById('ac-tb');
+  const rows = [];
+  CAMPUSES.forEach(c=>[...c.rooms,...c.labs,...c.halls].forEach(room=>room.acs.forEach(ac=>{
+    const s = ACState[ac.id]||ac;
+    rows.push({campus:c.short,block:room.block,room:room.name,floor:room.floor,...s,roomTemp:room.roomTemp});
+  })));
+  document.getElementById('ac-count').textContent = rows.length+' units';
+  tbody.innerHTML = rows.map(r=>{
+    const stP=r.status==='ON'?'<span class="pill p-g">● ON</span>':r.status==='FAULT'?'<span class="pill p-r">⚠ FAULT</span>':'<span class="pill p-gr">○ OFF</span>';
+    return`<tr class="ac-row" data-campus="${r.campus.toLowerCase()}" data-status="${r.status}" data-type="${r.type}">
+      <td class="mono" style="color:var(--blue);font-weight:700">${r.id}</td>
+      <td style="font-weight:600">${r.campus}</td>
+      <td>${r.block}</td>
+      <td style="font-size:11.5px">${r.room}</td>
+      <td><span class="pill p-gr">${r.floor}</span></td>
+      <td>${r.type}</td>
+      <td style="font-weight:800;text-align:center">${r.ton}T</td>
+      <td>${stP}</td>
+      <td>${r.mode!=='—'?`<span class="pill p-b">${r.mode}</span>`:'—'}</td>
+      <td style="text-align:center;font-weight:700">${r.setTemp!=='—'?r.setTemp+'°C':'—'}</td>
+      <td class="${tClass(r.roomTemp)}">${r.roomTemp}°C</td>
+      <td style="text-align:center">${r.energy>0?`<span class="mono">${r.energy}</span>`:'—'}</td>
+      <td><button class="btn btn-xs bxb" onclick="openACModal('${r.id}')">⚙ Control</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterACTable(){
+  const s = document.getElementById('ac-search').value.toLowerCase();
+  const cp = (document.getElementById('ac-campus-f').value||'').toLowerCase();
+  const st = (document.getElementById('ac-status-f').value||'').toLowerCase();
+  const tp = '';
+  document.querySelectorAll('#ac-tb tr').forEach(tr=>{
+    const txt = tr.textContent.toLowerCase();
+    const campusOk = !cp || txt.includes(cp);
+    const statusOk = !st || (tr.dataset.status||'').toLowerCase()===st;
+    const typeOk = !tp || (tr.dataset.type||'').toLowerCase().includes(tp);
+    const searchOk = !s || txt.includes(s);
+    tr.style.display = (campusOk&&statusOk&&typeOk&&searchOk)?'':'none';
+  });
+}
+
+// ══════════════════════════════════════════
+// ENVIRONMENT TABLE
+// ══════════════════════════════════════════
+function renderEnvTable(){
+  const tbody = document.getElementById('env-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = ENV_ZONES.map(z=>{
+    const sP = z.status==='Normal'?'<span class="pill p-g">Normal</span>':z.status==='Warning'?'<span class="pill p-y">Warning</span>':'<span class="pill p-r">Alert</span>';
+    const tC = tClass(z.temp);
+    return`<tr><td>${z.zone}</td><td style="font-weight:600">${z.campus}</td><td><span class="pill p-gr">${z.city||'—'}</span></td><td class="${tC}">${z.temp}°C</td><td>${z.hum}</td><td>${z.aqi}</td><td>${z.co2}</td><td>${z.occ}</td><td>${sP}</td></tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// ENERGY PAGE
+// ══════════════════════════════════════════
+function renderEnergy(){
+  const el = document.getElementById('energy-bars'); if(!el) return;
+  const cityColors = {
+    'Lahore':'#8B1A2D','Islamabad':'#1B2F5E','Rawalpindi':'#c2410c',
+    'Karachi':'#0f766e','Faisalabad':'#b45309','Hyderabad':'#5b21b6',
+    'Multan':'#0d7e50','Peshawar':'#1e40af'
+  };
+  // Group by city
+  const cityMap = {};
+  CAMPUSES.forEach(c=>{
+    if(!cityMap[c.city]) cityMap[c.city]={energy:0,campuses:[]};
+    cityMap[c.city].energy += c.energy;
+    cityMap[c.city].campuses.push(c);
+  });
+  const maxE = Math.max(...CAMPUSES.map(c=>c.energy));
+  const cityEntries = Object.entries(cityMap).sort((a,b)=>b[1].energy-a[1].energy);
+
+  el.innerHTML = cityEntries.map(([city,data])=>{
+    const col = cityColors[city]||'#64748b';
+    const campusRows = data.campuses.sort((a,b)=>b.energy-a.energy).map(c=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-left:8px">
+        <div style="width:140px;font-size:11.5px;font-weight:600;color:var(--text2);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.short}</div>
+        <div style="flex:1;background:var(--border);border-radius:99px;height:10px;overflow:hidden">
+          <div style="height:100%;width:${(c.energy/maxE)*100}%;background:${col};opacity:0.75;border-radius:99px"></div>
+        </div>
+        <div style="width:65px;font-size:11px;font-weight:700;color:var(--text1);text-align:right">${c.energy} kWh</div>
+      </div>`).join('');
+    return`
+    <div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid ${col}20">
+        <div style="width:12px;height:12px;border-radius:3px;background:${col};flex-shrink:0"></div>
+        <div style="font-size:13px;font-weight:800;color:var(--text1);flex:1">${city}</div>
+        <div style="font-size:12px;font-weight:700;color:${col}">${data.energy.toFixed(1)} kWh total · ${data.campuses.length} campuses</div>
+      </div>
+      ${campusRows}
+    </div>`;
+  }).join('');
+  buildCharts();
+}
+
+// ══════════════════════════════════════════
+// ALERTS
+// ══════════════════════════════════════════
+function renderAlerts(){
+  const tbody = document.getElementById('alerts-tbody'); if(!tbody) return;
+  const search = (document.getElementById('alert-search')?.value||'').toLowerCase();
+  const sev = document.getElementById('alert-severity')?.value||'';
+  const st = document.getElementById('alert-status-f')?.value||'';
+  const filtered = ALERTS.filter(a=>{
+    if(search && !a.alert.toLowerCase().includes(search) && !a.campus.toLowerCase().includes(search)) return false;
+    if(sev && a.severity!==sev) return false;
+    if(st && a.status!==st) return false;
+    return true;
+  });
+  const open = ALERTS.filter(a=>a.status==='Open').length;
+  const crit = ALERTS.filter(a=>a.severity==='Critical').length;
+  const stEl = document.getElementById('alert-summary-text');
+  if(stEl) stEl.textContent=`${open} active · ${crit} critical`;
+  tbody.innerHTML = filtered.map((a,i)=>{
+    const sevP=a.severity==='Critical'?'<span class="pill p-r">Critical</span>':a.severity==='High'?'<span class="pill p-y">High</span>':a.severity==='Medium'?'<span class="pill p-b">Medium</span>':'<span class="pill p-gr">Low</span>';
+    const stP=a.status==='Open'?'<span class="pill p-y">Open</span>':'<span class="pill p-g">Resolved</span>';
+    const actions=a.status==='Open'?`<div style="display:flex;gap:4px"><button class="btn btn-xs bxg" onclick="resolveAlertById(${ALERTS.indexOf(a)})">Resolve</button><button class="btn btn-xs bxb">Assign</button></div>`:'<button class="btn btn-xs bxb">View</button>';
+    return`<tr><td class="mono">${a.id}</td><td style="font-weight:600">${a.alert}</td><td>${a.system}</td><td>${a.campus}</td><td><span class="pill p-gr" style="font-size:10px">${a.city||'Pakistan'}</span></td><td style="font-size:11.5px;color:var(--text2)">${a.loc}</td><td class="mono">${a.time}</td><td>${sevP}</td><td>${stP}</td><td>${actions}</td></tr>`;
+  }).join('');
+}
+function filterAlerts(){renderAlerts();}
+function resolveAlertById(i){
+  ALERTS[i].status='Resolved';
+  renderAlerts();
+  showToast(`Alert ${ALERTS[i].id} marked resolved`,'success');
+}
+function markAllAlertsResolved(){
+  ALERTS.forEach(a=>a.status='Resolved');
+  renderAlerts();
+  showToast('All alerts marked as resolved','success');
+}
+function resolveAlert(){resolveAlertById(0);}
+
+// ══════════════════════════════════════════
+// USERS
+// ══════════════════════════════════════════
+function renderUsers(){
+  const tbody = document.getElementById('users-tbody'); if(!tbody) return;
+  const search = (document.getElementById('user-search')?.value||'').toLowerCase();
+  const role = document.getElementById('user-role-f')?.value||'';
+  const filtered = USERS.filter(u=>{
+    if(search && !u.name.toLowerCase().includes(search) && !u.email.toLowerCase().includes(search)) return false;
+    if(role && u.role!==role) return false;
+    return true;
+  });
+  const rolePill={
+    'Super Admin':'<span class="pill p-p">Super Admin</span>',
+    'Campus Admin':'<span class="pill p-b">Campus Admin</span>',
+    'Technician':'<span class="pill p-gr">Technician</span>',
+    'Viewer':'<span class="pill p-t">Viewer</span>'
+  };
+  tbody.innerHTML = filtered.map((u,i)=>{
+    const stP=u.status==='Active'?'<span class="pill p-g">Active</span>':'<span class="pill p-gr">Inactive</span>';
+    const isSA = u.role==='Super Admin';
+    return`<tr>
+      <td><div style="font-weight:700">${u.name}</div></td>
+      <td class="mono" style="font-size:11px">${u.email}</td>
+      <td>${rolePill[u.role]||u.role}</td>
+      <td>${u.campus}</td>
+      <td>${stP}</td>
+      <td style="color:var(--text3);font-size:11.5px">${u.lastActive}</td>
+      <td>${isSA?'—':`<div style="display:flex;gap:4px"><button class="btn btn-xs bxb" onclick="editUser(${USERS.indexOf(u)})">Edit</button><button class="btn btn-xs bxr" onclick="removeUser(${USERS.indexOf(u)})">Remove</button></div>`}</td>
+    </tr>`;
+  }).join('');
+}
+function filterUsers(){renderUsers();}
+function openUserModal(){
+  document.getElementById('user-modal-title').textContent='Invite User';
+  document.getElementById('u-name').value='';
+  document.getElementById('u-email').value='';
+  document.getElementById('user-modal').classList.add('open');
+}
+function editUser(i){
+  const u = USERS[i];
+  document.getElementById('user-modal-title').textContent='Edit User — '+u.name;
+  document.getElementById('u-name').value=u.name;
+  document.getElementById('u-email').value=u.email;
+  document.getElementById('user-modal').classList.add('open');
+}
+function saveUser(){
+  const name=document.getElementById('u-name').value.trim();
+  const email=document.getElementById('u-email').value.trim();
+  if(!name||!email){showToast('Please fill in all fields','error');return;}
+  const role=document.getElementById('u-role').value;
+  const campus=document.getElementById('u-campus').value;
+  USERS.push({name,email,role,campus,status:'Active',lastActive:'Just now'});
+  closeModal('user-modal');
+  renderUsers();
+  showToast('User '+name+' added successfully','success');
+}
+function removeUser(i){
+  const name=USERS[i].name;
+  USERS.splice(i,1);
+  renderUsers();
+  showToast('User '+name+' removed','info');
+}
+
+// ══════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════
+const NOTIFS = [
+  {title:'🚨 Smoke Detected — PC Main',body:'Science Block Floor 2 · Sensor SM-F201',time:'11:47',unread:true,crit:true},
+  {title:'❄️ AC Fault — PC Model Town',body:'Room MT-204 Block B · AC-Mo204',time:'11:12',unread:true,crit:false},
+  {title:'🌡️ Overheating Lab — PC Township',body:'Chem Lab TW-L02 · Temp 31°C',time:'10:58',unread:true,crit:false},
+  {title:'💧 Humidity Alert — PC Johar Town',body:'Computer Lab · Humidity 78%',time:'09:15',unread:false,crit:false},
+  {title:'✅ System Check Complete',body:'All campuses scanned successfully',time:'08:00',unread:false,crit:false},
+];
+function buildNotifList(){
+  const cont = document.getElementById('notif-list');
+  cont.innerHTML = NOTIFS.map((n,i)=>`
+    <div class="notif-item ${n.crit?'crit':n.unread?'unread':''}" onclick="NOTIFS[${i}].unread=false;this.classList.remove('unread','crit')">
+      <div style="font-size:12.5px;font-weight:700">${n.title}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">${n.body}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px;font-family:'JetBrains Mono',monospace">${n.time}</div>
+    </div>`).join('');
+}
+function toggleNotif(){
+  const p = document.getElementById('notif-panel');
+  p.classList.toggle('open');
+  buildNotifList();
+}
+function closeNotif(){document.getElementById('notif-panel').classList.remove('open');}
+function markAllRead(){
+  NOTIFS.forEach(n=>n.unread=false);
+  buildNotifList();
+  showToast('All notifications read','info');
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD ACTIONS
+// ══════════════════════════════════════════
+function refreshDashboard(){
+  showLoading();
+  setTimeout(()=>{
+    renderCityCards();buildCharts();buildDashKPIs();
+    hideLoading();showToast('Dashboard refreshed','success');
+  },700);
+}
+function applyEcoMode(){showToast('Eco-mode applied to eligible AC units across all Pakistan campuses','success');}
+function triggerDrill(){showToast('Emergency drill initiated for all Pakistan campuses','error');}
+function saveSettings(){showToast('Settings saved successfully','success');}
+
+// ══════════════════════════════════════════
+// PDF EXPORT UTILITIES
+// ══════════════════════════════════════════
+function getPDF(title){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  doc.setFont('helvetica');
+  doc.setFontSize(18); doc.setTextColor(0,122,61);
+  doc.text('Punjab College — All Pakistan Campuses', 14, 18);
+  doc.setFontSize(11); doc.setTextColor(70,85,105);
+  doc.text(title, 14, 26);
+  doc.setFontSize(9); doc.setTextColor(148,163,184);
+  doc.text('Generated: '+new Date().toLocaleString('en-PK'), 14, 32);
+  doc.setDrawColor(228,232,240); doc.line(14, 35, 283, 35);
+  return {doc, startY: 40};
+}
+
+function exportTablePDF(){
+  const tab=document.querySelector('.tab.active');
+  const name=tab?tab.textContent.trim():'Classrooms';
+  if(name.includes('Rooms')||name.includes('Classrooms')) exportTabPDF('rooms');
+  else if(name.includes('Labs')) exportTabPDF('labs');
+  else if(name.includes('Halls')) exportTabPDF('halls');
+  else exportSummaryPDF();
+}
+
+function exportTabPDF(type){
+  if(!CUR){showToast('Please open a campus first','error');return;}
+  const {doc,startY} = getPDF(`${CUR.short} — ${type==='rooms'?'Classrooms':type==='labs'?'Labs':'Halls & Common Areas'}`);
+  const data=type==='rooms'?CUR.rooms:type==='labs'?CUR.labs:CUR.halls;
+  const rows=[];
+  data.forEach(room=>{
+    room.acs.forEach((ac,ai)=>{
+      const st=ACState[ac.id]||ac;
+      rows.push([
+        ai===0?room.id:'', ai===0?room.name:'', ai===0?room.block:'', ai===0?room.floor:'', ai===0?room.cap:'',
+        st.id, st.status, st.mode, st.setTemp!=='—'?st.setTemp+'°C':'—', room.roomTemp+'°C', st.energy>0?st.energy+' kWh':'—'
+      ]);
+    });
+  });
+  doc.autoTable({startY,head:[['Room ID','Name','Block','Floor','Cap','AC ID','Status','Mode','Set°C','Room°C','Energy']],body:rows,styles:{fontSize:7,cellPadding:2,font:'helvetica'},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold',fontSize:7},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`${CUR.short.replace(/\s+/g,'-')}-${type}-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast(`${type} PDF exported successfully`,'success');
+}
+
+function exportSummaryPDF(){
+  if(!CUR){showToast('Please open a campus first','error');return;}
+  const {doc,startY} = getPDF(`${CUR.short} — AC Summary`);
+  const allAC=[...CUR.rooms,...CUR.labs,...CUR.halls].flatMap(r=>r.acs.map(a=>ACState[a.id]||a));
+  const rows=allAC.map(a=>[a.id,a.type,a.ton+'T',a.status,a.mode,a.setTemp!=='—'?a.setTemp+'°C':'—',a.energy>0?a.energy+' kWh':'—']);
+  doc.autoTable({startY,head:[['AC ID','Type','Tonnage','Status','Mode','Set Temp','Energy']],body:rows,styles:{fontSize:8,cellPadding:2.5},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`${CUR.short.replace(/\s+/g,'-')}-ac-summary.pdf`);
+  showToast('Summary PDF exported','success');
+}
+
+function exportACPDF(){
+  const {doc,startY} = getPDF('AC Management — All Pakistan Campuses');
+  const rows=[];
+  CAMPUSES.forEach(c=>[...c.rooms,...c.labs,...c.halls].forEach(room=>room.acs.forEach(ac=>{
+    const s=ACState[ac.id]||ac;
+    rows.push([s.id,c.short,room.block,room.name,room.floor,s.type,s.ton+'T',s.status,s.mode,s.setTemp!=='—'?s.setTemp+'°C':'—',room.roomTemp+'°C',s.energy>0?s.energy+' kWh':'—']);
+  })));
+  doc.autoTable({startY,head:[['AC ID','Campus','Block','Room','Floor','Type','Ton','Status','Mode','Set°C','Room°C','Energy']],body:rows.slice(0,100),styles:{fontSize:7,cellPadding:2},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold',fontSize:7},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`AC-Management-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('AC Management PDF exported','success');
+}
+
+function exportEnergyPDF(){
+  const {doc,startY} = getPDF('Energy Analytics — All Pakistan Campuses');
+  const rows=CAMPUSES.map(c=>[c.short,c.area+', '+c.city,c.energy+' kWh','PKR '+(c.energy*192.5/1000).toFixed(2)+'K',c.acActive+' active',c.temp+'°C']);
+  doc.autoTable({startY,head:[['Campus','Location','Energy Today','Cost','AC Units','Avg Temp']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Energy-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Energy PDF exported','success');
+}
+
+function exportAlertsPDF(){
+  const {doc,startY} = getPDF('Alerts & Notifications — All Pakistan Campuses');
+  const rows=ALERTS.map(a=>[a.id,a.alert,a.system,a.campus,a.loc,a.time,a.severity,a.status]);
+  doc.autoTable({startY,head:[['ID','Alert','System','Campus','Location','Time','Severity','Status']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Alerts-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Alerts PDF exported','success');
+}
+
+function exportEnvPDF(){
+  const {doc,startY} = getPDF('Environment Monitoring — All Pakistan Campuses (IRIS Ultra)');
+  const rows=ENV_ZONES.map(z=>[z.zone,z.campus,z.temp+'°C',z.hum,z.aqi,z.co2,z.occ,z.status]);
+  doc.autoTable({startY,head:[['Zone','Campus','Temp','Humidity','AQI','CO₂','Occupancy','Status']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Environment-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Environment PDF exported','success');
+}
+
+function exportFirePDF(){
+  const {doc,startY} = getPDF('Fire & Safety Report — All Pakistan Campuses (FireSense)');
+  const rows=[['SM-F201','💨 Smoke','PC Main','SF-201 · Science 2F','HIGH','TRIGGERED'],['FS-M001','🔥 Fire','PC Main','Admin Block · GF','Normal','OK'],['CO-T010','☁️ CO','PC Township','Chem Lab · 1F','14ppm','Warning'],['FS-JT01','🔥 Fire','PC Johar Town','Main Hall · GF','Normal','OK']];
+  doc.autoTable({startY,head:[['Sensor','Type','Campus','Location','Reading','Status']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[192,25,46],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Fire-Safety-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Fire & Safety PDF exported','success');
+}
+
+function exportUsersPDF(){
+  const {doc,startY} = getPDF('Users & Roles — Punjab College Pakistan');
+  const rows=USERS.map(u=>[u.name,u.email,u.role,u.campus,u.status,u.lastActive]);
+  doc.autoTable({startY,head:[['Name','Email','Role','Campus','Status','Last Active']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Users-PunjabCollege-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Users PDF exported','success');
+}
+
+function exportFullPDF(){
+  const {doc,startY} = getPDF('Full Campus Report — Punjab College Pakistan');
+  const rows=CAMPUSES.map(c=>[c.short,c.area+', '+c.city,c.status,c.temp+'°C',c.acActive+' ON / '+c.acFault+' fault',c.occ.toLocaleString(),c.energy+' kWh',c.rooms.length+c.labs.length+c.halls.length]);
+  doc.autoTable({startY,head:[['Campus','Location','Status','Avg Temp','AC Units','Occupancy','Energy','Rooms']],body:rows,styles:{fontSize:9,cellPadding:3},headStyles:{fillColor:[139,26,45],textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:[248,249,253]}});
+  doc.save(`Full-Report-PunjabCollege-Lahore-${new Date().toISOString().slice(0,10)}.pdf`);
+  showToast('Full Report PDF exported','success');
+}
+
+// ══════════════════════════════════════════
+// CSV EXPORTS
+// ══════════════════════════════════════════
+function downloadCSV(rows, filename){
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported: '+filename,'success');
+}
+
+function exportDashboardCSV(){
+  const rows=[['Campus','Area','City','Status','Avg Temp (°C)','AC Active','AC Fault','Occupancy','Energy (kWh)','Rooms'],...CAMPUSES.map(c=>[c.short,c.area,c.city,c.status,c.temp,c.acActive,c.acFault,c.occ,c.energy,c.rooms.length+c.labs.length+c.halls.length])];
+  downloadCSV(rows,`Dashboard-Lahore-${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+function exportCampusesCSV(){exportDashboardCSV();}
+
+function exportTableCSV(){
+  if(!CUR){showToast('Please open a campus first','error');return;}
+  const rows=[['Room ID','Room Name','Block','Floor','Capacity','AC Unit ID','Placement','Type','Tonnage','Status','Mode','Set Temp','Room Temp','Energy']];
+  [...CUR.rooms,...CUR.labs,...CUR.halls].forEach(room=>{
+    room.acs.forEach((ac,ai)=>{
+      const st=ACState[ac.id]||ac;
+      rows.push([ai===0?room.id:'',ai===0?room.name:'',ai===0?room.block:'',ai===0?room.floor:'',ai===0?room.cap:'',st.id,st.pos,st.type,st.ton+'T',st.status,st.mode,st.setTemp!=='—'?st.setTemp+'°C':'—',room.roomTemp+'°C',st.energy>0?st.energy+' kWh':'—']);
+    });
+  });
+  downloadCSV(rows,`${CUR.short.replace(/\s+/g,'-')}-rooms-${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+function exportACCSV(){
+  const rows=[['AC ID','Campus','Block','Room','Floor','Type','Tonnage','Status','Mode','Set Temp','Room Temp','Energy']];
+  CAMPUSES.forEach(c=>[...c.rooms,...c.labs,...c.halls].forEach(room=>room.acs.forEach(ac=>{
+    const s=ACState[ac.id]||ac;
+    rows.push([s.id,c.short,room.block,room.name,room.floor,s.type,s.ton+'T',s.status,s.mode,s.setTemp!=='—'?s.setTemp+'°C':'—',room.roomTemp+'°C',s.energy>0?s.energy+' kWh':'—']);
+  })));
+  downloadCSV(rows,`AC-Management-Lahore-${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+function exportEnergyCSV(){
+  const rows=[['Campus','Area','Energy Today (kWh)','Cost (PKR)','AC Active','AC Fault','Avg Temp (°C)'],...CAMPUSES.map(c=>[c.short,c.area+', '+c.city,c.energy,(c.energy*192.5/1000).toFixed(2),c.acActive,c.acFault,c.temp])];
+  downloadCSV(rows,`Energy-Lahore-${new Date().toISOString().slice(0,10)}.csv`);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+/* init called post-login */
+</script>
+</div><!-- /app-shell -->
+
+
+<script>
+const VALID_USER = 'admin', VALID_PASS = '123456';
+
+function doLogin() {
+  const user = document.getElementById('inp-user').value.trim();
+  const pass = document.getElementById('inp-pass').value;
+  const errDiv = document.getElementById('login-error');
+  const errMsg = document.getElementById('login-error-msg');
+  errDiv.classList.remove('show');
+  if (!user || !pass) { errMsg.textContent='Please enter username and password.'; errDiv.classList.add('show'); return; }
+  if (user !== VALID_USER || pass !== VALID_PASS) { errMsg.textContent='Incorrect username or password.'; errDiv.classList.add('show'); document.getElementById('inp-pass').value=''; return; }
+  const spinner=document.getElementById('login-spinner'), btnText=document.getElementById('login-btn-text'), btn=document.getElementById('login-btn');
+  spinner.classList.add('show'); btnText.textContent='Signing in…'; btn.disabled=true;
+  setTimeout(()=>{
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-shell').style.display='flex';
+    const ini=user.substring(0,2).toUpperCase();
+    const sa=document.getElementById('sb-avatar'); if(sa) sa.textContent=ini;
+    const ta=document.getElementById('top-avatar'); if(ta) ta.textContent=ini;
+    const un=document.getElementById('sb-username'); if(un) un.textContent=user.charAt(0).toUpperCase()+user.slice(1);
+    try{ buildCampusDropdown(); buildDashKPIs(); renderCityCards(); renderCards('camps-grid'); buildCharts(); buildNotifList(); }catch(e){console.warn(e);}
+    spinner.classList.remove('show'); btnText.textContent='Sign In to Dashboard'; btn.disabled=false;
+  }, 900);
+}
+
+function doLogout(){
+  document.getElementById('app-shell').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('inp-user').value='';
+  document.getElementById('inp-pass').value='';
+  document.getElementById('login-error').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('inp-user').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('inp-pass').focus(); });
+  document.getElementById('inp-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+});
+</script>
+
+</body>
+</html>
